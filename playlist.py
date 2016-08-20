@@ -1,4 +1,5 @@
 import json
+import os.path
 import string
 from random import randint
 
@@ -16,8 +17,9 @@ def update_store():
 
 def set_backing_store(store):
     _backing_store = store
-    with open(store, 'r') as fh:
-        _playlist = json.loads(fh.read())
+    if os.path.exists(store):
+        with open(store, 'r') as fh:
+            _playlist = json.loads(fh.read())
 
 def add_song(song):
     """Adds a song to the playlist.

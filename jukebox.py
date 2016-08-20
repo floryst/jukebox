@@ -5,12 +5,17 @@ from autobahn.twisted.util import sleep
 from autobahn.twisted.wamp import ApplicationSession
 from autobahn.wamp.exception import ApplicationError
 
+import playlist
+PLAYLIST_STORE = 'playlist.json'
+
 class Jukebox(ApplicationSession):
 
     log = Logger()
 
     @inlineCallbacks
     def onJoin(self, details):
+        # initialize jukebox
+        playlist.set_backing_store(PLAYLIST_STORE)
 
         # jukebox actions
         yield self.register(self.add, 'com.forrestli.jukebox.add')
