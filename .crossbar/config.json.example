@@ -59,7 +59,7 @@
             "components": [
                 {
                     "type": "class",
-                    "classname": "session.JukeboxSession",
+                    "classname": "jukebox.Jukebox",
                     "realm": "realm1",
                     "transport": {
                         "type": "websocket",

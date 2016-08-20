@@ -2,7 +2,7 @@ from twisted.internet.defer import inlineCallbacks
 from twisted.logger import Logger
 
 from autobahn.twisted.util import sleep
-from autobahn.twisted.wamp import ApplicationSession
+from autobahn.twisted.wamp import ApplicationSession, ApplicationRunner
 from autobahn.wamp.exception import ApplicationError
 
 class JukeboxPlayer(ApplicationSession):
@@ -24,3 +24,7 @@ class JukeboxPlayer(ApplicationSession):
     def toggle_pause(self):
         yield self.publish('com.forrestli.jukebox.event.player.toggle_pause')
         return True
+
+if __name__ == '__main__':
+    runner = ApplicationRunner('ws://127.0.0.1:8080/ws', realm='realm1')
+    runner.run(JukeboxPlayer)

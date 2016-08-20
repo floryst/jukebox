@@ -21,7 +21,7 @@ class Jukebox(ApplicationSession):
 
     def add(self, url):
         log.info('[jukebox.add]: {url}', url=url)
-        yield self.publish('com.forrestli.jukebox.event.playlist.add' url)
+        yield self.publish('com.forrestli.jukebox.event.playlist.add', url)
         return True
 
     def remove(self, song_id):
