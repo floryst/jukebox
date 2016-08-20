@@ -24,25 +24,29 @@ class Jukebox(ApplicationSession):
         yield self.register(self.toggle_pause,
                 'com.forrestli.jukebox.toggle_pause')
 
+    @inlineCallbacks
     def add(self, url):
-        log.info('[jukebox.add]: {url}', url=url)
+        self.log.info('[jukebox.add]: {url}', url=url)
         yield self.publish('com.forrestli.jukebox.event.playlist.add', url)
         return True
 
+    @inlineCallbacks
     def remove(self, song_id):
-        log.info('[jukebox.remove]: {song_id}', song_id=song_id)
+        self.log.info('[jukebox.remove]: {song_id}', song_id=song_id)
         yield self.publish('com.forrestli.jukebox.event.playlist.remove',
                 song_id)
         return True
 
+    @inlineCallbacks
     def play(self, song_id):
-        log.info('[jukebox.play]: {song_id}', song_id=song_id)
+        self.log.info('[jukebox.play]: {song_id}', song_id=song_id)
         res = yield self.call('com.forrestli.jukebox.player.play', {
             'uri': song_id
             })
         return res
 
+    @inlineCallbacks
     def toggle_pause(self):
-        log.info('[jukebox.toggle_pause]')
+        self.log.info('[jukebox.toggle_pause]')
         res = yield self.call('com.forrestli.jukebox.player.toggle_pause')
         return res
