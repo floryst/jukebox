@@ -21,20 +21,23 @@ class Jukebox(ApplicationSession):
 
     def add(self, url):
         log.info('[jukebox.add]: {url}', url=url)
-        self.publish('com.forrestli.jukebox.event.playlist.add' url)
+        yield self.publish('com.forrestli.jukebox.event.playlist.add' url)
         return True
 
     def remove(self, song_id):
         log.info('[jukebox.remove]: {song_id}', song_id=song_id)
-        self.publish('com.forrestli.jukebox.event.playlist.remove', song_id)
+        yield self.publish('com.forrestli.jukebox.event.playlist.remove',
+                song_id)
         return True
 
     def play(self, song_id):
         log.info('[jukebox.play]: {song_id}', song_id=song_id)
-        self.publish('com.forrestli.jukebox.event.player.play', song_id)
-        return True
+        res = yield self.call('com.forrestli.jukebox.player.play', {
+            'uri': song_id
+            })
+        return res
 
     def toggle_pause(self):
         log.info('[jukebox.toggle_pause]')
-        self.publish('com.forrestli.jukebox.event.player.toggle_pause')
-        return True
+        res = yield self.call('com.forrestli.jukebox.player.toggle_pause')
+        return res
