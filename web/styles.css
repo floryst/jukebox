@@ -1,0 +1,143 @@
+* {
+	padding: 0;
+	margin: 0;
+}
+
+body {
+	font-family: 'Source Sans Pro', sans-serif;
+	background: rgba(0, 0, 0, 0.2) url("../images/seamless-dark-wood-texture.jpg");
+
+}
+
+button:hover,
+input[type=submit]:hover {
+	background-color: rgba(0, 0, 0, 0.4) !important;
+	color: #bbb;
+}
+
+button[disabled=disabled], /* CSS 2 */
+button:disabled, /* CSS 3 */
+button:disabled:hover,
+input[type=submit]:active,
+button:active {
+	/* !important to override button:hover below */
+	background-color: rgba(50, 50, 50, 1) !important;
+	color: #bbb !important;
+}
+
+.page-content {
+	margin: 20px;
+	padding: 10px;
+	background-color: rgba(255, 255, 255, 0.5);
+	text-align: center;
+	clear: left;
+}
+
+.controls-container {
+	box-shadow: 0px 0px 50px 20px rgba(255, 255, 255, 0.1);
+	background-color: rgba(255, 255, 255, 0.1);
+	margin: auto;
+	padding: 3px;
+}
+
+.controls-container > table {
+	display: inline-block;
+}
+
+.controls-container > table button {
+	width: 40px;
+	height: 40px;
+	border: 1px solid black;
+	border-radius: 5px;
+	background-color: rgba(0, 0, 0, 0.05);
+	font-family: u2000;
+	font: 12px Arial,Helvetica,sans-serif;
+}
+
+.controls-container .input {
+	border: 1px solid black;
+	border-radius: 5px;
+	display: inline-block;
+	margin: 2px;
+}
+
+.controls-container .input input {
+	height: 30px;
+	border: none;
+	background-color: rgba(0, 0, 0, 0.05);
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+.controls-container .input input::-webkit-input-placeholder {
+	color: rgb(66, 66, 66);
+}
+
+.controls-container .input input:-moz-placeholder { /* Firefox 18- */
+	color: rgb(66, 66, 66);
+}
+
+.controls-container .input input::-moz-placeholder {  /* Firefox 19+ */
+	color: rgb(66, 66, 66);
+}
+
+.controls-container .input input:-ms-input-placeholder {
+	color: rgb(66, 66, 66);
+}
+
+.left {
+	float: left;
+}
+
+.playlist-container {
+	box-shadow: 0px 0px 50px 20px rgba(255, 255, 255, 0.1);
+	background-color: rgba(255, 255, 255, 0.1);
+	margin: auto auto 20px;
+	overflow: hidden;
+	padding: 2px;
+}
+
+.playlist-container ol#playlist {
+	margin: 0 auto;
+	list-style: none;
+	text-align: left;
+	overflow: auto;
+	min-height: 100px;
+}
+
+.playlist-container ol#playlist > li {
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+.playlist-container ol#playlist > li:hover {
+	background-color: rgba(0, 0, 0, 0.1);
+}
+
+.playlist-container ol#playlist > li > button {
+	width: 60px;
+	border: 1px solid black;
+	background-color: rgba(0, 0, 0, 0.05);
+	margin: 1px;
+	padding: 2px;
+}
+
+.playlist-container ol#playlist > li > button:first-of-type {
+	border-bottom-left-radius: 5px;
+	border-top-left-radius: 5px;
+}
+
+.playlist-container ol#playlist > li > button:last-of-type {
+	border-bottom-right-radius: 5px;
+	border-top-right-radius: 5px;
+	margin-right: 5px;
+}
+
+.playlist-container ol#playlist > li > button:hover {
+}
+
+@media (max-width : 800px) {
+	.left {
+		float: none;
+	}
+}
