@@ -37,6 +37,8 @@
 
                 session.subscribe('com.forrestli.jukebox.event.playlist.add',
                         app.onPlaylistAdd);
+                session.subscribe('com.forrestli.jukebox.event.playlist.moveup',
+                        app.onPlaylistMoveUp);
 
                 $id('addVideo').addEventListener('click', app.addVideo, false);
                 $id('playpause').addEventListener('click', app.playPause, false);
@@ -103,6 +105,14 @@
             app.playlist = app.playlist.concat(songs);
             app.renderPlaylist();
         },
+
+        onPlaylistMoveUp: function(song_pos) {
+            var song = app.playlist[song_pos];
+            app.playlist.splice(song_pos, 1);
+            app.playlist.splice(song_pos-1, 0, song);
+            app.renderPlaylist();
+        },
+
 
         addVideo: function() {
             var url = $id('videoUrl').value;
