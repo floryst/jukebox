@@ -10,8 +10,9 @@
     <link rel="stylesheet" type="text/css" href="styles.css" media="screen"/>
     <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,200,700' rel='stylesheet' type='text/css'>
     <link href="./favicon.ico" rel="icon" type="image/png">
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-    <script src="http://autobahn.s3.amazonaws.com/autobahnjs/latest/autobahn.min.jgz"></script>
+    <script src="tmpl.min.js"></script>
+    <script src="jquery.min.js"></script>
+    <script src="autobahn.min.js"></script>
     <title>HatCH Jukebox</title>
 </head>
 <body>
@@ -69,5 +70,16 @@
 <script src="./util.js"></script>
 <script src="./ui.js"></script>
 <script src="./jukebox.js"></script>
+<script type=text/x-tmpl" id="playlistEntry">
+{% for (var i = 0; i < o.playlist.length; i++) { %}
+    <li class="playlist_elm" id="{%=i%}_li">
+        <button id="play{%=i%}" class="play">play</button>
+        <button id="remove{%=i%}" class="remove">remove</button>
+        <button id="moveup{%=i%}" class="moveup">moveup</button>
+        <a href={%=o.playlist[i].source_url%} target="_blank"
+                title={%=o.playlist[i].title%}>{%=o.playlist[i].title%}</a>
+    </li>
+{% } %}
+</script>
 </body>
 </html>

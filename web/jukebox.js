@@ -18,6 +18,16 @@
                 console.log('Connected');
                 app.session = session;
 
+                session.call('com.forrestli.jukebox.get_playlist').then(
+                        app.renderPlaylist,
+                        function(err) {
+                            console.log('[get_playlist] error:', err);
+                        }
+                );
+
+                session.subscribe('com.forrestli.jukebox.event.playlist.add',
+                        app.onPlaylistAdd);
+
                 $id('addVideo').addEventListener('click', app.addVideo, false);
                 $id('playpause').addEventListener('click', app.playPause, false);
                 $id('volUp').addEventListener('click', app.volUp, false);
@@ -32,6 +42,16 @@
             };
 
             connection.open();
+        },
+
+        renderPlaylist: function(playlist) {
+            $id('playlist').innerHTML = tmpl('playlistEntry', {
+                playlist: playlist
+            });
+        },
+
+        onPlaylistAdd: function(msg) {
+            console.log(msg);
         },
 
         addVideo: function() {
