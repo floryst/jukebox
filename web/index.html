@@ -70,12 +70,15 @@
 <script src="./util.js"></script>
 <script src="./ui.js"></script>
 <script src="./jukebox.js"></script>
-<script type=text/x-tmpl" id="playlistEntry">
+<script type=text/x-tmpl" id="playlistTmpl">
 {% for (var i = 0; i < o.playlist.length; i++) { %}
     <li class="playlist_elm" id="{%=i%}_li">
-        <button id="play{%=i%}" class="play">play</button>
-        <button id="remove{%=i%}" class="remove">remove</button>
-        <button id="moveup{%=i%}" class="moveup">moveup</button>
+        <button id="play{%=i%}" class="play"
+                onclick="window.JukeboxApp.playSong.call(null, {%=i%})">play</button>
+        <button id="remove{%=i%}" class="remove"
+                onclick="window.JukeboxApp.removeSong.call(null, {%=i%})">remove</button>
+        <button id="moveup{%=i%}" class="moveup"
+                onclick="window.JukeboxApp.moveupSong.call(null, {%=i%})">moveup</button>
         <a href={%=o.playlist[i].source_url%} target="_blank"
                 title={%=o.playlist[i].title%}>{%=o.playlist[i].title%}</a>
     </li>

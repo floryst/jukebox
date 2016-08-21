@@ -4,7 +4,7 @@
         return document.getElementById(ident);
     };
 
-    var app = {
+    window.JukeboxApp = app = {
 
         session: null,
         playlist: Array(),
@@ -55,10 +55,48 @@
         },
 
         renderPlaylist: function() {
-            $id('playlist').innerHTML = tmpl('playlistEntry', {
+            $id('playlist').innerHTML = tmpl('playlistTmpl', {
                 playlist: app.playlist,
-                player_state: app.player_state
+                player_state: app.player_state,
+                actions: {
+                    playSong: app.playSong
+                }
             });
+        },
+
+        playSong: function(songPos) {
+            var songId = app.playlist[songPos].id;
+            app.session.call('com.forrestli.jukebox.play', [songId]).then(
+                    function(res) {
+                        console.log('[play] res:', res);
+                    },
+                    function(err) {
+                        console.log('[play] error:', err);
+                    }
+            );
+        },
+
+        removeSong: function(songPos) {
+            var songId = app.playlist[songPos].id;
+            app.session.call('com.forrestli.jukebox.remove', [songId]).then(
+                    function(res) {
+                        console.log('[remove] res:', res);
+                    },
+                    function(err) {
+                        console.log('[remove] error:', err);
+                    }
+            );
+        },
+
+        moveupSong: function(songPos) {
+            app.session.call('com.forrestli.jukebox.moveup', [songPos]).then(
+                    function(res) {
+                        console.log('[moveup] res:', res);
+                    },
+                    function(err) {
+                        console.log('[moveup] error:', err);
+                    }
+            );
         },
 
         onPlaylistAdd: function(songs) {
