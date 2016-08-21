@@ -15,7 +15,7 @@ SONG_MODEL = dict(
 def _random_id():
     bound = len(string.ascii_lowercase)
     return ''.join(
-            string.ascii_lowercase[randint(0, bound-1)] for i in range(bound))
+            string.ascii_lowercase[randint(0, bound-1)] for i in range(10))
 
 class Playlist(object):
 
