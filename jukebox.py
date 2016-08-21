@@ -32,6 +32,7 @@ class Jukebox(ApplicationSession):
         yield self.register(self.add, 'com.forrestli.jukebox.add')
         yield self.register(self.remove, 'com.forrestli.jukebox.remove')
         yield self.register(self.play, 'com.forrestli.jukebox.play')
+        yield self.register(self.moveup, 'com.forrestli.jukebox.moveup')
         yield self.register(self.toggle_pause,
                 'com.forrestli.jukebox.toggle_pause')
 
@@ -73,4 +74,15 @@ class Jukebox(ApplicationSession):
     def toggle_pause(self):
         self.log.info('[jukebox.toggle_pause]')
         res = yield self.call('com.forrestli.jukebox.player.toggle_pause')
+        return res
+
+    @inlineCallbacks
+    # Should I use song_pos or song_id here? song_pos is faster, but
+    # song_id ensures the correct song is selected...
+    def moveup(self, song_pos):
+        self.log.info('[jukebox.moveup]: {song_pos}', song_pos=song_pos)
+        res = self.playlist.move_song(song_pos, song_pos-1)
+        if res:
+            yield self.publish('com.forrestli.jukebox.event.playlist.moveup',
+                    song_pos)
         return res

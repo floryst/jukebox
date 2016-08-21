@@ -51,9 +51,16 @@ class Playlist(object):
                 return
 
     def move_song(self, idx1, idx2):
+        if idx1 < 0 or idx1 >= len(self.playlist):
+            return False
+        if idx2 < 0 or idx2 >= len(self.playlist):
+            return False
         song = self.playlist[idx1]
         del self.playlist[idx1]
         self.playlist.insert(idx2, song)
+
+        self._update_store()
+        return True
 
     def get_playlist(self):
         return self.playlist
