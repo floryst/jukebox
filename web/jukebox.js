@@ -7,7 +7,14 @@
     var app = {
 
         session: null,
-        
+        playlist: Array(),
+        player_state: {
+            currently_playing: '',
+            is_playing: false,
+            volume: -1,
+            position: -1,
+        },
+
         init: function() {
             var connection = new autobahn.Connection({
                 url: 'ws://127.0.0.1:8080/ws',
@@ -19,7 +26,10 @@
                 app.session = session;
 
                 session.call('com.forrestli.jukebox.get_playlist').then(
-                        app.renderPlaylist,
+                        function(playlist) {
+                            app.playlist = playlist;
+                            app.renderPlaylist();
+                        },
                         function(err) {
                             console.log('[get_playlist] error:', err);
                         }
@@ -44,18 +54,21 @@
             connection.open();
         },
 
-        renderPlaylist: function(playlist) {
+        renderPlaylist: function() {
             $id('playlist').innerHTML = tmpl('playlistEntry', {
-                playlist: playlist
+                playlist: app.playlist,
+                player_state: app.player_state
             });
         },
 
-        onPlaylistAdd: function(msg) {
-            console.log(msg);
+        onPlaylistAdd: function(songs) {
+            app.playlist = app.playlist.concat(songs);
+            app.renderPlaylist();
         },
 
         addVideo: function() {
             var url = $id('videoUrl').value;
+            $id('videoUrl').value = '';
             app.session.call('com.forrestli.jukebox.add', [url]).then(
                     function(res) {
                         console.log('[add] res:', res);
