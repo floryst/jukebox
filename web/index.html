@@ -41,25 +41,30 @@
     <tr>
         <td></td>
         <td>
-            <button id="volUp">▲</button>
+            <button id="volUp"
+                    onclick="window.JukeboxApp.volUp();">▲</button>
         </td>
         <td></td>
     </tr>
     <tr>
         <td>
-            <button id="rewindbtn">◀</button>
+            <button id="rewindbtn"
+                    onclick="window.JukeboxApp.rewind();">◀</button>
         </td>
         <td>
-            <button id="playpause">Play</button>
+            <button id="playpause"
+                    onclick="window.JukeboxApp.playPause();">Play</button>
         </td>
         <td>
-            <button id="fastforwardbtn">▶</button>
+            <button id="fastforwardbtn"
+                    onclick="window.JukeboxApp.fastForward();">▶</button>
         </td>
     </tr>
     <tr>
         <td></td>
         <td>
-            <button id="volDown">▼</button>
+            <button id="volDown"
+                    onclick="window.JukeboxApp.volDown();">▼</button>
         </td>
         <td></td>
     </tr>
@@ -69,7 +74,8 @@
 <div>Position: <span id="position"></span></div>
 <div class="input">
     <input type="text" id="videoUrl" placeholder="YouTube url">
-    <input type="submit" id="addVideo" value="Add">
+    <input type="submit" id="addVideo" value="Add"
+            onclick="window.JukeboxApp.addVideo();">
 </div>
 </script>
 

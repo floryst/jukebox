@@ -51,13 +51,6 @@
                         app.onPlaylistMoveUp);
                 session.subscribe('com.forrestli.jukebox.event.player.play',
                         app.onPlayerPlay);
-
-                $id('addVideo').addEventListener('click', app.addVideo, false);
-                $id('playpause').addEventListener('click', app.playPause, false);
-                $id('volUp').addEventListener('click', app.volUp, false);
-                $id('volDown').addEventListener('click', app.volDown, false);
-                $id('rewindbtn').addEventListener('click', app.rewind, false);
-                $id('fastforwardbtn').addEventListener('click', app.fastForward, false);
             };
 
             connection.onclose = function(reason, details) {
