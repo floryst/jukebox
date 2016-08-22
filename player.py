@@ -17,10 +17,12 @@ class JukeboxPlayer(ApplicationSession):
         yield self.register(self.toggle_pause,
                 'com.forrestli.jukebox.player.toggle_pause')
 
+    @inlineCallbacks
     def play(self, msg):
         yield self.publish('com.forrestli.jukebox.event.player.play', msg)
         return True
 
+    @inlineCallbacks
     def toggle_pause(self):
         yield self.publish('com.forrestli.jukebox.event.player.toggle_pause')
         return True
