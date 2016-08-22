@@ -65,9 +65,17 @@ class Jukebox(ApplicationSession):
     @inlineCallbacks
     def play(self, song_id):
         self.log.info('[jukebox.play]: {song_id}', song_id=song_id)
-        res = yield self.call('com.forrestli.jukebox.player.play', {
-            'uri': song_id
-            })
+        source_url = self.playlist.get_song(song_id=song_id)['source_url']
+        opts = {
+            'skip_download': True,
+            'format': 'bestaudio'
+        }
+        with YoutubeDL(opts) as ydl:
+            info = ydl.extract_info(source_url, False)
+        info = model_transformer.transform(info)
+
+        res = yield self.call('com.forrestli.jukebox.player.play',
+            song_id, info['play_url'])
         return res
 
     @inlineCallbacks

@@ -64,3 +64,12 @@ class Playlist(object):
 
     def get_playlist(self):
         return self.playlist
+
+    def get_song(self, song_id=None, song_pos=None):
+        if song_id is not None:
+            for song in self.playlist:
+                if song['id'] == song_id:
+                    return song
+            return None
+        elif song_pos is not None:
+            return self.playlist[song_pos]

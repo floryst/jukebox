@@ -18,8 +18,9 @@ class JukeboxPlayer(ApplicationSession):
                 'com.forrestli.jukebox.player.toggle_pause')
 
     @inlineCallbacks
-    def play(self, msg):
-        yield self.publish('com.forrestli.jukebox.event.player.play', msg)
+    def play(self, song_id, url):
+        self.log.info('play: {url}', url=url)
+        yield self.publish('com.forrestli.jukebox.event.player.play', song_id)
         return True
 
     @inlineCallbacks
