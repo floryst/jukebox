@@ -9,7 +9,7 @@
         session: null,
         playlist: Array(),
         player_state: {
-            currently_playing: '',
+            currentlyPlaying: '',
             is_playing: false,
             volume: -1,
             position: -1,
@@ -39,6 +39,8 @@
                         app.onPlaylistAdd);
                 session.subscribe('com.forrestli.jukebox.event.playlist.moveup',
                         app.onPlaylistMoveUp);
+                session.subscribe('com.forrestli.jukebox.event.player.play',
+                        app.onPlayerPlay);
 
                 $id('addVideo').addEventListener('click', app.addVideo, false);
                 $id('playpause').addEventListener('click', app.playPause, false);
@@ -57,6 +59,7 @@
         },
 
         renderPlaylist: function() {
+            console.log(app.player_state);
             $id('playlist').innerHTML = tmpl('playlistTmpl', {
                 playlist: app.playlist,
                 player_state: app.player_state,
@@ -113,6 +116,11 @@
             app.renderPlaylist();
         },
 
+        onPlayerPlay: function(msg) {
+            var songId = msg[0];
+            app.player_state.currentlyPlaying = songId;
+            app.renderPlaylist();
+        },
 
         addVideo: function() {
             var url = $id('videoUrl').value;

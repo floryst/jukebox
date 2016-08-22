@@ -136,6 +136,10 @@ button:active {
 .playlist-container ol#playlist > li > button:hover {
 }
 
+.playing {
+	background-color: #bbb;
+}
+
 @media (max-width : 800px) {
 	.left {
 		float: none;

@@ -72,7 +72,7 @@
 <script src="./jukebox.js"></script>
 <script type=text/x-tmpl" id="playlistTmpl">
 {% for (var i = 0; i < o.playlist.length; i++) { %}
-    <li class="playlist_elm" id="{%=i%}_li">
+    <li class="playlist_elm {% if (o.player_state.currentlyPlaying == o.playlist[i].id) print("playing"); %}" id="{%=i%}_li">
         <button id="play{%=i%}" class="play"
                 onclick="window.JukeboxApp.playSong.call(null, {%=i%})">play</button>
         <button id="remove{%=i%}" class="remove"
