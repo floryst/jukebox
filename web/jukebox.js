@@ -35,6 +35,16 @@
                         }
                 );
 
+                session.call('com.forrestli.jukebox.player.get_state').then(
+                        function(state) {
+                            app.player_state = state;
+                            app.renderPlayer();
+                        },
+                        function(err) {
+                            console.log('[get_playlist] error:', err);
+                        }
+                );
+
                 session.subscribe('com.forrestli.jukebox.event.playlist.add',
                         app.onPlaylistAdd);
                 session.subscribe('com.forrestli.jukebox.event.playlist.moveup',
