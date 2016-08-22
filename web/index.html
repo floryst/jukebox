@@ -19,43 +19,7 @@
 <div class="page-content">
     <h1>HatCH Jukebox</h1>
 
-    <div class="controls-container left">
-        <h2>Controls</h2>
-        <table>
-            <tbody>
-            <tr>
-                <td></td>
-                <td>
-                    <button id="volUp">▲</button>
-                </td>
-                <td></td>
-            </tr>
-            <tr>
-                <td>
-                    <button id="rewindbtn">◀</button>
-                </td>
-                <td>
-                    <button id="playpause">Play</button>
-                </td>
-                <td>
-                    <button id="fastforwardbtn">▶</button>
-                </td>
-            </tr>
-            <tr>
-                <td></td>
-                <td>
-                    <button id="volDown">▼</button>
-                </td>
-                <td></td>
-            </tr>
-            </tbody>
-        </table>
-        <div>Volume: <span id="volume"></span></div>
-        <div>Position: <span id="position"></span></div>
-        <div class="input">
-            <input type="text" id="videoUrl" placeholder="YouTube url">
-            <input type="submit" id="addVideo" value="Add">
-        </div>
+    <div id="player" class="controls-container left">
     </div>
     <div class="playlist-container">
         <h2>Playlist</h2>
@@ -68,8 +32,47 @@
     <div style="clear:both"></div>
 </div>
 <script src="./util.js"></script>
-<script src="./ui.js"></script>
 <script src="./jukebox.js"></script>
+<script src="./ui.js"></script>
+<script type=text/x-tmpl" id="playerTmpl">
+<h2>Controls</h2>
+<table>
+    <tbody>
+    <tr>
+        <td></td>
+        <td>
+            <button id="volUp">▲</button>
+        </td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>
+            <button id="rewindbtn">◀</button>
+        </td>
+        <td>
+            <button id="playpause">Play</button>
+        </td>
+        <td>
+            <button id="fastforwardbtn">▶</button>
+        </td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>
+            <button id="volDown">▼</button>
+        </td>
+        <td></td>
+    </tr>
+    </tbody>
+</table>
+<div>Volume: <span id="volume"></span></div>
+<div>Position: <span id="position"></span></div>
+<div class="input">
+    <input type="text" id="videoUrl" placeholder="YouTube url">
+    <input type="submit" id="addVideo" value="Add">
+</div>
+</script>
+
 <script type=text/x-tmpl" id="playlistTmpl">
 {% for (var i = 0; i < o.playlist.length; i++) { %}
     <li class="playlist_elm {% if (o.player_state.currently_playing == o.playlist[i].id) print("playing"); %}" id="{%=i%}_li">

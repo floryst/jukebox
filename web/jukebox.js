@@ -9,7 +9,7 @@
         session: null,
         playlist: Array(),
         player_state: {
-            currentlyPlaying: '',
+            currently_playing: '',
             is_playing: false,
             volume: -1,
             position: -1,
@@ -69,7 +69,6 @@
         },
 
         renderPlaylist: function() {
-            console.log(app.player_state);
             $id('playlist').innerHTML = tmpl('playlistTmpl', {
                 playlist: app.playlist,
                 player_state: app.player_state,
@@ -77,6 +76,14 @@
                     playSong: app.playSong
                 }
             });
+        },
+
+        renderPlayer: function() {
+            $id('player').innerHTML = tmpl('playerTmpl', {
+                player_state: app.player_state
+            });
+            // Need this from ui.js
+            $(window).resize();
         },
 
         playSong: function(songPos) {
@@ -128,7 +135,7 @@
 
         onPlayerPlay: function(msg) {
             var songId = msg[0];
-            app.player_state.currentlyPlaying = songId;
+            app.player_state.currently_playing = songId;
             app.renderPlaylist();
         },
 

@@ -12,14 +12,30 @@ class JukeboxPlayer(ApplicationSession):
     @inlineCallbacks
     def onJoin(self, details):
 
+        self.current_song = ''
+        self.is_playing = False
+        self.volume = 100
+        self.position = -1
+
+        yield self.register(self.get_state,
+                'com.forrestli.jukebox.player.get_state')
         yield self.register(self.play,
                 'com.forrestli.jukebox.player.play')
         yield self.register(self.toggle_pause,
                 'com.forrestli.jukebox.player.toggle_pause')
 
+    def get_state(self):
+        return {
+            'currently_playing': self.current_song,
+            'is_playing': self.is_playing,
+            'volume': self.volume,
+            'position': self.position
+        }
+
     @inlineCallbacks
     def play(self, song_id, url):
         self.log.info('play: {url}', url=url)
+        self.current_song = song_id
         yield self.publish('com.forrestli.jukebox.event.player.play', song_id)
         return True
 
