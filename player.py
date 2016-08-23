@@ -28,6 +28,8 @@ class JukeboxPlayer(ApplicationSession):
 
         self.player = Gst.ElementFactory.make('playbin', None)
 
+        self.current_song = ''
+
         def run_player():
             bus = self.player.get_bus()
             bus.add_signal_watch()
