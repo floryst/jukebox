@@ -81,7 +81,9 @@ class JukeboxPlayer(ApplicationSession):
         _, _, pending = self.player.get_state(1)
         if pending == Gst.State.VOID_PENDING:
             self.player.set_state(Gst.State.READY)
-            yield self.wait_for_state(Gst.State.READY)
+            success = yield self.wait_for_state(Gst.State.READY)
+            if not success:
+                return False
 
             self.current_song = song_id
             self.player.set_property('uri', url)
