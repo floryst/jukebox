@@ -52,8 +52,11 @@ class JukeboxPlayer(ApplicationSession):
 
     @inlineCallbacks
     def wait_for_state(self, gst_state):
+        """I know this isn't asynchronous, but it gets the job done.
+        Technically I should be checking for state changes in _bus_watcher...
+        """
         counter = 0
-        max_counter = 20
+        max_counter = 10
         while counter <= max_counter:
             # block up to 1 second
             state_change_return, state, pending  = self.player.get_state(1)
@@ -75,12 +78,21 @@ class JukeboxPlayer(ApplicationSession):
 
     @inlineCallbacks
     def play(self, song_id, url):
-        self.log.info('play: {url}', url=url)
-        self.current_song = song_id
-        self.player.set_property('uri', url)
-        self.player.set_state(Gst.State.PLAYING)
-        success = yield self.wait_for_state(Gst.State.PLAYING)
-        if not success:
+        _, _, pending = self.player.get_state(1)
+        if pending == Gst.State.VOID_PENDING:
+            self.player.set_state(Gst.State.READY)
+            yield self.wait_for_state(Gst.State.READY)
+
+            self.current_song = song_id
+            self.player.set_property('uri', url)
+
+            self.player.set_state(Gst.State.PLAYING)
+            success = yield self.wait_for_state(Gst.State.PLAYING)
+            if not success:
+                return False
+        else:
+            self.log.info('[player] cannot play due to pending state: {state}',
+                    state=pending)
             return False
 
         yield self.publish('com.forrestli.jukebox.event.player.play', song_id)
