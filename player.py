@@ -1,5 +1,6 @@
 import signal
 import threading
+import time
 
 from twisted.internet.defer import inlineCallbacks
 from twisted.logger import Logger
@@ -30,6 +31,7 @@ class JukeboxPlayer(ApplicationSession):
         self.is_playing = False
         self.volume = 100
         self.position = -1
+        self.duration = -1
 
         def run_player():
             bus = self.player.get_bus()
@@ -38,6 +40,17 @@ class JukeboxPlayer(ApplicationSession):
             GObject.threads_init()
             Gtk.main()
         threading.Thread(target=run_player).start()
+
+        def monitor_player():
+            while True:
+                time.sleep(1)
+                state, pos = self.player.query_position(Gst.Format.TIME)
+                if not state:
+                    continue
+                self.position = pos
+                yield self.publish(
+                        'com.forrestli.jukebox.event.player.position', pos)
+        threading.Thread(target=monitor_player).start()
 
         yield self.register(self.get_state,
                 'com.forrestli.jukebox.player.get_state')
@@ -73,7 +86,8 @@ class JukeboxPlayer(ApplicationSession):
             'currently_playing': self.current_song,
             'is_playing': self.is_playing,
             'volume': self.volume,
-            'position': self.position
+            'position': self.position,
+            'duration': self.duration
         }
 
     @inlineCallbacks
