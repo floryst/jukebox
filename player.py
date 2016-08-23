@@ -27,11 +27,6 @@ class JukeboxPlayer(ApplicationSession):
     def onJoin(self, details):
 
         self.player = Gst.ElementFactory.make('playbin', None)
-        self.current_song = ''
-        self.is_playing = False
-        self.volume = 100
-        self.position = -1
-        self.duration = -1
 
         def run_player():
             bus = self.player.get_bus()
@@ -62,6 +57,10 @@ class JukeboxPlayer(ApplicationSession):
     def _bus_watcher(self, bus, msg):
         if msg.type == Gst.MessageType.ERROR:
             self.log.info('[player] error: {error}', error=msg.parse_error())
+        elif msg.type == Gst.MessageType.EOS:
+            self.player.set_state(Gst.State.READY)
+            yield self.wait_for_state(Gst.State.READY)
+            self.publish('com.forrestli.jukebox.event.player.finished')
 
     @inlineCallbacks
     def wait_for_state(self, gst_state):
@@ -82,12 +81,27 @@ class JukeboxPlayer(ApplicationSession):
         return False
 
     def get_state(self):
+        ret, playing_state, pending = self.player.get_state(1)
+        is_playing = ret == Gst.StateChangeReturn.SUCCESS and \
+                playing_state == Gst.State.PLAYING and \
+                pending == Gst.State.VOID_PENDING
+
+        volume = self.player.get_property('volume')
+
+        state, position = self.player.query_position(Gst.Format.TIME)
+        if not state:
+            position = None
+
+        state, duration = self.player.query_position(Gst.Format.TIME)
+        if not state:
+            duration = None
+
         return {
             'currently_playing': self.current_song,
-            'is_playing': self.is_playing,
-            'volume': self.volume,
-            'position': self.position,
-            'duration': self.duration
+            'is_playing': is_playing,
+            'volume': volume,
+            'position': position,
+            'duration': duration
         }
 
     @inlineCallbacks
