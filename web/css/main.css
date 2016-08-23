@@ -1,0 +1,57 @@
+.no-margin{
+	margin-bottom: 0px;	
+}
+
+.sidebar {
+	background-color: #ee6e73;
+}
+
+.remote {
+	padding-top: 20px;
+}
+
+.main {
+	background-color: blue;
+}
+
+.expand{
+	height:100%;
+}
+
+body {
+	height:91.2vh;
+}
+
+.no-shadow{
+	box-shadow: none
+}
+
+.no-shadow:hover{
+	box-shadow:none;
+}
+
+.song-container {
+	overflow: auto;
+}
+
+h5 {
+	color:white;
+}
+
+.other {
+	margin-top: 10vh;
+}
+.collection-center{
+	margin-top: 1vh;
+}
+.center_info {
+	margin-top: 0.075vh;
+	margin-left:0.1vh;
+}
+.avatar-center{
+	margin-top:1.5vh;
+}
+.force-right
+{
+	margin-right: 8vh;
+}

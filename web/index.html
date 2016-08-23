@@ -1,97 +1,361 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-        >
+<html>
+
 <head>
-    <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
-    <meta name="description" content="HatCH Jukebox">
-    <link rel="icon" href="./favicon.ico" type="image/x-icon"/>
-    <link rel="stylesheet" type="text/css" href="styles.css" media="screen"/>
-    <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,200,700' rel='stylesheet' type='text/css'>
-    <link href="./favicon.ico" rel="icon" type="image/png">
-    <script src="tmpl.min.js"></script>
-    <script src="jquery.min.js"></script>
-    <script src="autobahn.min.js"></script>
-    <title>HatCH Jukebox</title>
+    <meta charset="UTF-8">
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title> Jukebox </title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.1/css/materialize.min.css">
+    <link href="css/font-awesome.min.css" type="text/css" rel="stylesheet">
+    <!--Import jQuery before materialize.js-->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.1/js/materialize.min.js"></script>
+    <script src="http://autobahn.s3.amazonaws.com/autobahnjs/latest/autobahn.min.jgz"></script>
+    <link href="css/main.css" type="text/css" rel="stylesheet">
 </head>
-<body>
-<div class="page-content">
-    <h1>HatCH Jukebox</h1>
 
-    <div id="player" class="controls-container left">
-    </div>
-    <div class="playlist-container">
-        <h2>Playlist</h2>
-
-        <div>
-            <ol id="playlist">
-            </ol>
+<body ng-app="jukebox">
+    <!-- Navbar goes here -->
+    <nav>
+        <div class="nav-wrapper headerbar no-margin">
+            <div class="valign-wrapper row no-margin">
+                <div class="col s12 m3 center-align">
+                    <h4>Jukebox</h4>
+                </div>
+                <div class="col s1 hide-on-med-and-down">
+                    <h6> Song Progress : </h6>
+                </div>
+                <div class="col s8 progressBarContainer hide-on-med-and-down" id="songProgressBar">
+                    <div class="progress">
+                        <div class="determinate"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div class="sidebar row valign-wrapper no-margin hide-on-med-and-up">
+        <div class="col s12 center-align">
+            <h5> Song Progress : </h5>
         </div>
     </div>
-    <div style="clear:both"></div>
-</div>
-<script src="./util.js"></script>
-<script src="./jukebox.js"></script>
-<script src="./ui.js"></script>
-<script type=text/x-tmpl" id="playerTmpl">
-<h2>Controls</h2>
-<table>
-    <tbody>
-    <tr>
-        <td></td>
-        <td>
-            <button id="volUp"
-                    onclick="window.JukeboxApp.volUp();">▲</button>
-        </td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>
-            <button id="rewindbtn"
-                    onclick="window.JukeboxApp.rewind();">◀</button>
-        </td>
-        <td>
-            <button id="playpause"
-                    onclick="window.JukeboxApp.playPause();">Play</button>
-        </td>
-        <td>
-            <button id="fastforwardbtn"
-                    onclick="window.JukeboxApp.fastForward();">▶</button>
-        </td>
-    </tr>
-    <tr>
-        <td></td>
-        <td>
-            <button id="volDown"
-                    onclick="window.JukeboxApp.volDown();">▼</button>
-        </td>
-        <td></td>
-    </tr>
-    </tbody>
-</table>
-<div>Volume: <span id="volume"></span></div>
-<div>Position: <span id="position"></span></div>
-<div class="input">
-    <input type="text" id="videoUrl" placeholder="YouTube url">
-    <input type="submit" id="addVideo" value="Add"
-            onclick="window.JukeboxApp.addVideo();">
-</div>
-</script>
-
-<script type=text/x-tmpl" id="playlistTmpl">
-{% for (var i = 0; i < o.playlist.length; i++) { %}
-    <li class="playlist_elm {% if (o.player_state.currently_playing == o.playlist[i].id) print("playing"); %}" id="{%=i%}_li">
-        <button id="play{%=i%}" class="play"
-                onclick="window.JukeboxApp.playSong.call(null, {%=i%})">play</button>
-        <button id="remove{%=i%}" class="remove"
-                onclick="window.JukeboxApp.removeSong.call(null, {%=i%})">remove</button>
-        <button id="moveup{%=i%}" class="moveup"
-                onclick="window.JukeboxApp.moveupSong.call(null, {%=i%})">moveup</button>
-        <a href={%=o.playlist[i].source_url%} target="_blank"
-                title={%=o.playlist[i].title%}>{%=o.playlist[i].title%}</a>
-    </li>
-{% } %}
-</script>
+    <div class="row sidebar no-margin valign-center hide-on-med-and-up">
+        <div class="col s12 progressBarContainer" id="songProgressBar">
+            <div class="progress">
+                <div class="determinate"></div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <!-- Sidebar Panel here -->
+    <div class="row expand no-margin">
+        <div class=" sidebar col s12 m4 l3 expand no-margin">
+            <div class="remote expand no-margin">
+                <div class="row">
+                    <div class="col s12 center-align">
+                        <h5> Welcome, Forrest </h5>
+                    </div>
+                </div>
+                <div class="valign-wrapper center-align">
+                    <div class="row">
+                        <div class="row">
+                            <div class="col s6">
+                                <button class=" waves-effect waves-light btn disabled" id="youtube">Youtube</button>
+                            </div>
+                            <div class="col s6">
+                                <button class="waves-effect waves-light btn" id="spotify">Spotify</button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col s4">
+                                <button class=" waves-effect waves-light btn"><i class="fa fa-2x fa-fast-backward" id="backwards"></i></button>
+                            </div>
+                            <div class="col s4">
+                                <button class=" waves-effect waves-light btn" id="play-pause"><i class="fa fa-2x fa-play"></i></button>
+                            </div>
+                            <div class="col s4">
+                                <button class="waves-effect waves-light btn" id="forwards"><i class="fa fa-2x fa-fast-forward"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col s3">
+                                <button class=" btn-floating btn-large waves-effect waves-light red" id="volume-down"><i class="fa fa-2x fa-volume-down"></i></button>
+                            </div>
+                            <div class="col s6">
+                                <form action="#">
+                                    <p class="range-field">
+                                        <input type="range" id="test5" min="0" max="100" id="volume-slider" />
+                                    </p>
+                                </form>
+                            </div>
+                            <div class="col s3">
+                                <button class=" btn-floating btn-large waves-effect waves-light red" id="volume-up"><i class="fa fa-2x fa-volume-up"></i></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <!--<form class="col s12" id="youtubezform">
+                                <div class="row">
+                                    <div class="input-field col s12">
+                                        <input placeholder="Youtube URL" id="youtubeURL" type="text" class="validate">
+                                    </div>
+                                    <div class="col s12">
+                                        <button class="btn-floating btn-large waves-effect waves-light red" type="submit" name="action" id="youtubeURL submit"> <i class="material-icons right">send</i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>-->
+                        </div>
+                        <div class="row logout">
+                            <button class="waves-effect waves-light btn" id="sign-out"><i class="fa fa-2x fa-sign-out left"></i>Signout</button>
+                        </div>
+                        <div class="row other">
+                            <div class="col s6">
+                                <a class="hide-on-sm-only waves-effect waves-light btn">Source</a>
+                            </div>
+                            <div class="col s6">
+                                <a class="hide-on-sm-only waves-effect waves-light btn">IRC</a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col s12 hide-on-sm-only">
+                                <a class="waves-effect waves-light btn">Minecraft</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Main Content -->
+        <div class="col s12 m8 l9 expand">
+            <div class="song-container expand">
+                <ul class="collection">
+                    <li class="collection-item avatar">
+                        <i class="fa fa-youtube circle red avatar-center"></i>
+                        <span class="title">Title</span>
+                        <p>First Line
+                            <br> Second Line
+                        </p>
+                        <div class="valign-wrapper">
+                            <button class=" btn-floating waves-effect waves-light red collection-center secondary-content no-shadow"><i class="material-icons">add</i></button>
+                            <button class="btn-floating waves-effect waves-light blue collection-center secondary-content force-right no-shadow"><i class="material-icons center_info">info_outline</i></button>
+                        </div>
+                    </li>
+                    <li class="collection-item avatar">
+                        <i class="fa fa-3x fa-spotify circle green avatar-center"></i>
+                        <span class="title">Title</span>
+                        <p>First Line
+                            <br> Second Line
+                        </p>
+                        <div class="valign-wrapper">
+                            <button class=" btn-floating waves-effect waves-light red collection-center secondary-content no-shadow"><i class="material-icons">add</i></button>
+                            <button class="btn-floating waves-effect waves-light blue collection-center secondary-content force-right no-shadow"><i class="material-icons center_info">info_outline</i></button>
+                        </div>
+                    </li>
+                    <li class="collection-item avatar">
+                        <i class="fa fa-youtube circle red avatar-center"></i>
+                        <span class="title">Title</span>
+                        <p>First Line
+                            <br> Second Line
+                        </p>
+                        <div class="valign-wrapper">
+                            <button class=" btn-floating waves-effect waves-light red collection-center secondary-content no-shadow"><i class="material-icons">add</i></button>
+                            <button class="btn-floating waves-effect waves-light blue collection-center secondary-content force-right no-shadow"><i class="material-icons center_info">info_outline</i></button>
+                        </div>
+                    </li>
+                    <li class="collection-item avatar">
+                        <i class="fa fa-3x fa-spotify circle green avatar-center"></i>
+                        <span class="title">Title</span>
+                        <p>First Line
+                            <br> Second Line
+                        </p>
+                        <div class="valign-wrapper">
+                            <button class=" btn-floating waves-effect waves-light red collection-center secondary-content no-shadow"><i class="material-icons">add</i></button>
+                            <button class="btn-floating waves-effect waves-light blue collection-center secondary-content force-right no-shadow"><i class="material-icons center_info">info_outline</i></button>
+                        </div>
+                    </li>
+                    <li class="collection-item avatar">
+                        <i class="fa fa-youtube circle red avatar-center"></i>
+                        <span class="title">Title</span>
+                        <p>First Line
+                            <br> Second Line
+                        </p>
+                        <div class="valign-wrapper">
+                            <button class=" btn-floating waves-effect waves-light red collection-center secondary-content no-shadow"><i class="material-icons">add</i></button>
+                            <button class="btn-floating waves-effect waves-light blue collection-center secondary-content force-right no-shadow"><i class="material-icons center_info">info_outline</i></button>
+                        </div>
+                    </li>
+                    <li class="collection-item avatar">
+                        <i class="fa fa-3x fa-spotify circle green avatar-center"></i>
+                        <span class="title">Title</span>
+                        <p>First Line
+                            <br> Second Line
+                        </p>
+                        <div class="valign-wrapper">
+                            <button class=" btn-floating waves-effect waves-light red collection-center secondary-content no-shadow"><i class="material-icons">add</i></button>
+                            <button class="btn-floating waves-effect waves-light blue collection-center secondary-content force-right no-shadow"><i class="material-icons center_info">info_outline</i></button>
+                        </div>
+                    </li>
+                    <li class="collection-item avatar">
+                        <i class="fa fa-youtube circle red avatar-center"></i>
+                        <span class="title">Title</span>
+                        <p>First Line
+                            <br> Second Line
+                        </p>
+                        <div class="valign-wrapper">
+                            <button class=" btn-floating waves-effect waves-light red collection-center secondary-content no-shadow"><i class="material-icons">add</i></button>
+                            <button class="btn-floating waves-effect waves-light blue collection-center secondary-content force-right no-shadow"><i class="material-icons center_info">info_outline</i></button>
+                        </div>
+                    </li>
+                    <li class="collection-item avatar">
+                        <i class="fa fa-3x fa-spotify circle green avatar-center"></i>
+                        <span class="title">Title</span>
+                        <p>First Line
+                            <br> Second Line
+                        </p>
+                        <div class="valign-wrapper">
+                            <button class=" btn-floating waves-effect waves-light red collection-center secondary-content no-shadow"><i class="material-icons">add</i></button>
+                            <button class="btn-floating waves-effect waves-light blue collection-center secondary-content force-right no-shadow"><i class="material-icons center_info">info_outline</i></button>
+                        </div>
+                    </li>
+                    <li class="collection-item avatar">
+                        <i class="fa fa-youtube circle red avatar-center"></i>
+                        <span class="title">Title</span>
+                        <p>First Line
+                            <br> Second Line
+                        </p>
+                        <div class="valign-wrapper">
+                            <button class=" btn-floating waves-effect waves-light red collection-center secondary-content no-shadow"><i class="material-icons">add</i></button>
+                            <button class="btn-floating waves-effect waves-light blue collection-center secondary-content force-right no-shadow"><i class="material-icons center_info">info_outline</i></button>
+                        </div>
+                    </li>
+                    <li class="collection-item avatar">
+                        <i class="fa fa-3x fa-spotify circle green avatar-center"></i>
+                        <span class="title">Title</span>
+                        <p>First Line
+                            <br> Second Line
+                        </p>
+                        <div class="valign-wrapper">
+                            <button class=" btn-floating waves-effect waves-light red collection-center secondary-content no-shadow"><i class="material-icons">add</i></button>
+                            <button class="btn-floating waves-effect waves-light blue collection-center secondary-content force-right no-shadow"><i class="material-icons center_info">info_outline</i></button>
+                        </div>
+                    </li>
+                    <li class="collection-item avatar">
+                        <i class="fa fa-youtube circle red avatar-center"></i>
+                        <span class="title">Title</span>
+                        <p>First Line
+                            <br> Second Line
+                        </p>
+                        <div class="valign-wrapper">
+                            <button class=" btn-floating waves-effect waves-light red collection-center secondary-content no-shadow"><i class="material-icons">add</i></button>
+                            <button class="btn-floating waves-effect waves-light blue collection-center secondary-content force-right no-shadow"><i class="material-icons center_info">info_outline</i></button>
+                        </div>
+                    </li>
+                    <li class="collection-item avatar">
+                        <i class="fa fa-3x fa-spotify circle green avatar-center"></i>
+                        <span class="title">Title</span>
+                        <p>First Line
+                            <br> Second Line
+                        </p>
+                        <div class="valign-wrapper">
+                            <button class=" btn-floating waves-effect waves-light red collection-center secondary-content no-shadow"><i class="material-icons">add</i></button>
+                            <button class="btn-floating waves-effect waves-light blue collection-center secondary-content force-right no-shadow"><i class="material-icons center_info">info_outline</i></button>
+                        </div>
+                    </li>
+                    <li class="collection-item avatar">
+                        <i class="fa fa-youtube circle red avatar-center"></i>
+                        <span class="title">Title</span>
+                        <p>First Line
+                            <br> Second Line
+                        </p>
+                        <div class="valign-wrapper">
+                            <button class=" btn-floating waves-effect waves-light red collection-center secondary-content no-shadow"><i class="material-icons">add</i></button>
+                            <button class="btn-floating waves-effect waves-light blue collection-center secondary-content force-right no-shadow"><i class="material-icons center_info">info_outline</i></button>
+                        </div>
+                    </li>
+                    <li class="collection-item avatar">
+                        <i class="fa fa-3x fa-spotify circle green avatar-center"></i>
+                        <span class="title">Title</span>
+                        <p>First Line
+                            <br> Second Line
+                        </p>
+                        <div class="valign-wrapper">
+                            <button class=" btn-floating waves-effect waves-light red collection-center secondary-content no-shadow"><i class="material-icons">add</i></button>
+                            <button class="btn-floating waves-effect waves-light blue collection-center secondary-content force-right no-shadow"><i class="material-icons center_info">info_outline</i></button>
+                        </div>
+                    </li>
+                    <li class="collection-item avatar">
+                        <i class="fa fa-youtube circle red avatar-center"></i>
+                        <span class="title">Title</span>
+                        <p>First Line
+                            <br> Second Line
+                        </p>
+                        <div class="valign-wrapper">
+                            <button class=" btn-floating waves-effect waves-light red collection-center secondary-content no-shadow"><i class="material-icons">add</i></button>
+                            <button class="btn-floating waves-effect waves-light blue collection-center secondary-content force-right no-shadow"><i class="material-icons center_info">info_outline</i></button>
+                        </div>
+                    </li>
+                    <li class="collection-item avatar">
+                        <i class="fa fa-3x fa-spotify circle green avatar-center"></i>
+                        <span class="title">Title</span>
+                        <p>First Line
+                            <br> Second Line
+                        </p>
+                        <div class="valign-wrapper">
+                            <button class=" btn-floating waves-effect waves-light red collection-center secondary-content no-shadow"><i class="material-icons">add</i></button>
+                            <button class="btn-floating waves-effect waves-light blue collection-center secondary-content force-right no-shadow"><i class="material-icons center_info">info_outline</i></button>
+                        </div>
+                    </li>
+                    <li class="collection-item avatar">
+                        <i class="fa fa-youtube circle red avatar-center"></i>
+                        <span class="title">Title</span>
+                        <p>First Line
+                            <br> Second Line
+                        </p>
+                        <div class="valign-wrapper">
+                            <button class=" btn-floating waves-effect waves-light red collection-center secondary-content no-shadow"><i class="material-icons">add</i></button>
+                            <button class="btn-floating waves-effect waves-light blue collection-center secondary-content force-right no-shadow"><i class="material-icons center_info">info_outline</i></button>
+                        </div>
+                    </li>
+                    <li class="collection-item avatar">
+                        <i class="fa fa-3x fa-spotify circle green avatar-center"></i>
+                        <span class="title">Title</span>
+                        <p>First Line
+                            <br> Second Line
+                        </p>
+                        <div class="valign-wrapper">
+                            <button class=" btn-floating waves-effect waves-light red collection-center secondary-content no-shadow"><i class="material-icons">add</i></button>
+                            <button class="btn-floating waves-effect waves-light blue collection-center secondary-content force-right no-shadow"><i class="material-icons center_info">info_outline</i></button>
+                        </div>
+                    </li>
+                    <li class="collection-item avatar">
+                        <i class="fa fa-youtube circle red avatar-center"></i>
+                        <span class="title">Title</span>
+                        <p>First Line
+                            <br> Second Line
+                        </p>
+                        <div class="valign-wrapper">
+                            <button class=" btn-floating waves-effect waves-light red collection-center secondary-content no-shadow"><i class="material-icons">add</i></button>
+                            <button class="btn-floating waves-effect waves-light blue collection-center secondary-content force-right no-shadow"><i class="material-icons center_info">info_outline</i></button>
+                        </div>
+                    </li>
+                    <li class="collection-item avatar">
+                        <i class="fa fa-3x fa-spotify circle green avatar-center"></i>
+                        <span class="title">Title</span>
+                        <p>First Line
+                            <br> Second Line
+                        </p>
+                        <div class="valign-wrapper">
+                            <button class=" btn-floating waves-effect waves-light red collection-center secondary-content no-shadow"><i class="material-icons">add</i></button>
+                            <button class="btn-floating waves-effect waves-light blue collection-center secondary-content force-right no-shadow"><i class="material-icons center_info">info_outline</i></button>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    </div>
 </body>
+
 </html>
