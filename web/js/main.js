@@ -17,11 +17,12 @@
         };
 
         self.currentlyPlayingText = ko.computed(function() {
-            if (self.player_state.currently_playing() == '') {
+            var currently_playing = self.player_state.currently_playing();
+            if (currently_playing == '') {
                 return 'Nothing playing!';
             }
             else {
-                return self.player_state.currently_playing();
+                return currently_playing;
             }
         }, self);
 
@@ -86,10 +87,8 @@
 
             session.subscribe('com.forrestli.jukebox.event.playlist.add',
                     self.onPlaylistAdd.bind(self));
-            session.subscribe('com.forrestli.jukebox.event.playlist.moveup',
-                    self.onPlaylistMoveUp.bind(self));
             session.subscribe('com.forrestli.jukebox.event.player.play',
-                    app.onPlayerPlay.bind(self));
+                    self.onPlayerPlay.bind(self));
         };
 
         connection.onclose = function(reason, details) {
@@ -101,21 +100,12 @@
     };
 
     JukeboxApp.prototype.onPlaylistAdd = function(songs) {
-        console.log(songs);
         this.playlist(this.playlist().concat(songs));
-    };
-
-    JukeboxApp.prototype.onPlaylistMoveUp = function(song_pos) {
-        var song = app.playlist[song_pos];
-        app.playlist.splice(song_pos, 1);
-        app.playlist.splice(song_pos-1, 0, song);
-        app.renderPlaylist();
     };
 
     JukeboxApp.prototype.onPlayerPlay = function(msg) {
         var songId = msg[0];
-        app.player_state.currently_playing = songId;
-        app.renderPlaylist();
+        this.player_state.currently_playing(songId);
     };
 
     ko.applyBindings(new JukeboxApp());
