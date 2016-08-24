@@ -46,6 +46,18 @@
             });
         };
 
+        self.isPlaying = ko.pureComputed(function() {
+            return self.player_state.currently_playing() != '';
+        });
+
+        self.btnPlayPauseText = ko.pureComputed(function() {
+            if (self.player_state.currently_playing() == '')
+                return 'play_arrow';
+            if (self.player_state.paused())
+                return 'play_arrow';
+            return 'pause';
+        }, self);
+
         self.addSong = function(formElement) {
             var url = formElement.elements['youtubeURL'].value;
             formElement.elements['youtubeURL submit'].disabled = true;
@@ -70,6 +82,18 @@
                 function(err) {
                     Materialize.toast('Failed to play song', 4000);
                     console.log('[play] error:', err);
+                }
+            );
+        };
+
+        self.togglePause = function() {
+            self.session.call('com.forrestli.jukebox.toggle_pause').then(
+                function(res) {
+                    console.log('[toggle_pause] res:', res);
+                },
+                function(err) {
+                    Materialize.toast('Failed to toggle pause', 4000);
+                    console.log('[toggle_pause] error:', err);
                 }
             );
         };

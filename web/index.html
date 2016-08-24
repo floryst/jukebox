@@ -64,13 +64,17 @@
                         </div>
                         <div class="row">
                             <div class="col s4">
-                                <button class=" waves-effect waves-light btn"><i class="fa fa-2x fa-fast-backward" id="backwards"></i></button>
+                                <button class=" waves-effect waves-light btn"><i class="material-icons">fast_rewind</i></button>
                             </div>
                             <div class="col s4">
-                                <button class=" waves-effect waves-light btn" id="play-pause"><i class="fa fa-2x fa-play"></i></button>
+                                <button class=" waves-effect waves-light btn" id="play-pause"
+                                    data-bind="enable: isPlaying, click: togglePause">
+                                    <i class="material-icons"
+                                        data-bind="text: btnPlayPauseText">play_arrow</i>
+                                </button>
                             </div>
                             <div class="col s4">
-                                <button class="waves-effect waves-light btn" id="forwards"><i class="fa fa-2x fa-fast-forward"></i></button>
+                                <button class="waves-effect waves-light btn" id="forwards"><i class="material-icons">fast_forward</i></button>
                             </div>
                         </div>
                         <div class="row">
