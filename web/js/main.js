@@ -16,6 +16,17 @@
             position: ko.observable(-1),
         };
 
+        self.currentlyPlayingText = ko.computed(function() {
+            if (self.player_state.currently_playing == '') {
+                return 'Nothing playing!';
+            }
+            else {
+                return self.player_state.currently_playing;
+            }
+        }, self);
+
+
+
         var connection = new autobahn.Connection({
             url: 'ws://127.0.0.1:8080/ws',
             realm: 'realm1'
@@ -61,16 +72,6 @@
         };
 
         connection.open();
-    };
-
-    JukeboxApp.prototype.currentlyPlayingText = ko.computed(function() {
-            if (this.player_state.currently_playing == '') {
-                return 'Nothing playing!';
-            }
-            else {
-                return this.player_state.currently_playing;
-            }
-        }, this);
     };
 
     ko.applyBindings(new JukeboxApp());
