@@ -22,7 +22,11 @@
                 return 'Nothing playing!';
             }
             else {
-                return currently_playing;
+                for (var i = 0; i < self.playlist().length; i++) {
+                    if (self.playlist()[i].id == currently_playing) {
+                        return self.playlist()[i].title;
+                    }
+                }
             }
         }, self);
 
