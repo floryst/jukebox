@@ -105,7 +105,7 @@
         };
 
         self.togglePause = function() {
-            self.session.call('com.forrestli.jukebox.toggle_pause').then(
+            self.session.call('com.forrestli.jukebox.player.toggle_pause').then(
                 function(res) { },
                 function(err) {
                     Materialize.toast('Failed to toggle pause', 4000);
