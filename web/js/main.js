@@ -5,14 +5,62 @@
     };
 
     var JukeboxApp = function() {
-        this.session = null;
-        this.playlist = Array();
-        this.player_state = {
+        var self = this;
+
+        self.session = null;
+        self.playlist = Array();
+        self.player_state = {
             currently_playing: '',
             paused: ko.observable(false),
             volume: ko.observable(-1),
             position: ko.observable(-1),
         };
+
+        var connection = new autobahn.Connection({
+            url: 'ws://127.0.0.1:8080/ws',
+            realm: 'realm1'
+        });
+
+        connection.onopen = function(session, details) {
+            console.log('Connected');
+            self.session = session;
+
+            session.call('com.forrestli.jukebox.get_playlist').then(
+                    function(playlist) {
+                        self.playlist = playlist;
+                        //app.renderPlaylist();
+                    },
+                    function(err) {
+                        console.log('[get_playlist] error:', err);
+                    }
+            );
+
+            session.call('com.forrestli.jukebox.player.get_state').then(
+                    function(state) {
+                        //self.player_state = state;
+                        //app.renderPlayer();
+                    },
+                    function(err) {
+                        console.log('[get_playlist] error:', err);
+                    }
+            );
+
+            /*
+            session.subscribe('com.forrestli.jukebox.event.playlist.add',
+                    self.onPlaylistAdd);
+            session.subscribe('com.forrestli.jukebox.event.playlist.moveup',
+                    self.onPlaylistMoveUp);
+            session.subscribe('com.forrestli.jukebox.event.player.play',
+                    app.onPlayerPlay);
+                    */
+        };
+
+        connection.onclose = function(reason, details) {
+            console.log('Connection lost:', reason);
+            self.session = null;
+        };
+
+        connection.open();
     };
 
     JukeboxApp.prototype.currentlyPlayingText = ko.computed(function() {
@@ -30,49 +78,6 @@
     window.JukeboxApp = app = {
 
         init: function() {
-            var connection = new autobahn.Connection({
-                url: 'ws://127.0.0.1:8080/ws',
-                realm: 'realm1'
-            });
-
-            connection.onopen = function(session, details) {
-                console.log('Connected');
-                app.session = session;
-
-                session.call('com.forrestli.jukebox.get_playlist').then(
-                        function(playlist) {
-                            app.playlist = playlist;
-                            app.renderPlaylist();
-                        },
-                        function(err) {
-                            console.log('[get_playlist] error:', err);
-                        }
-                );
-
-                session.call('com.forrestli.jukebox.player.get_state').then(
-                        function(state) {
-                            app.player_state = state;
-                            app.renderPlayer();
-                        },
-                        function(err) {
-                            console.log('[get_playlist] error:', err);
-                        }
-                );
-
-                session.subscribe('com.forrestli.jukebox.event.playlist.add',
-                        app.onPlaylistAdd);
-                session.subscribe('com.forrestli.jukebox.event.playlist.moveup',
-                        app.onPlaylistMoveUp);
-                session.subscribe('com.forrestli.jukebox.event.player.play',
-                        app.onPlayerPlay);
-            };
-
-            connection.onclose = function(reason, details) {
-                console.log('Connection lost:', reason);
-                app.session = null;
-            };
-
-            connection.open();
         },
 
         renderPlaylist: function() {
