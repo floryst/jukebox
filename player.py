@@ -57,6 +57,8 @@ class JukeboxPlayer(ApplicationSession):
                 'com.forrestli.jukebox.player.stop')
         yield self.register(self.toggle_pause,
                 'com.forrestli.jukebox.player.toggle_pause')
+        yield self.register(self.set_volume,
+                'com.forrestli.jukebox.player.set_volume')
 
     def _bus_watcher(self, bus, msg):
         if msg.type == Gst.MessageType.ERROR:
@@ -144,6 +146,19 @@ class JukeboxPlayer(ApplicationSession):
     @inlineCallbacks
     def toggle_pause(self):
         yield self.publish('com.forrestli.jukebox.event.player.toggle_pause')
+        return True
+
+    @inlineCallbacks
+    def set_volume(self, volume):
+        try:
+            volume = int(volume)
+        except ValueError:
+            return False
+        if volume < 0 or volume > 100:
+            return False
+
+        self.player.set_property('volume', volume / 100)
+        yield self.publish('com.forrestli.jukebox.event.player.volume', volume)
         return True
 
 if __name__ == '__main__':

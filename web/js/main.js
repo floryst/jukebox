@@ -17,6 +17,16 @@
         };
         self.isLoading = ko.observable(false);
 
+        self.player_state.volume.subscribe(function(volume) {
+            self.session.call('com.forrestli.jukebox.player.set_volume',
+                    [volume]).then(
+                function(res) { },
+                function(err) {
+                    console.log('[volume] error:', err);
+                }
+            );
+        });
+
         self.currentlyPlayingText = ko.pureComputed(function() {
             var currently_playing = self.player_state.currently_playing();
             if (currently_playing == '') {
@@ -140,7 +150,7 @@
                         window.clearTimeout(timer);
                         self.isLoading(false);
                         console.log(self.isLoading());
-                        throw res;
+                        throw err;
                     }
                 );
             };
