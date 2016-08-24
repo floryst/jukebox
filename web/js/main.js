@@ -16,7 +16,7 @@
             position: ko.observable(-1),
         };
 
-        self.currentlyPlayingText = ko.computed(function() {
+        self.currentlyPlayingText = ko.pureComputed(function() {
             var currently_playing = self.player_state.currently_playing();
             if (currently_playing == '') {
                 return 'Nothing playing!';
