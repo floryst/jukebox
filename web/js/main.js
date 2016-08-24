@@ -32,6 +32,7 @@
                     formElement.elements['youtubeURL'].value = '';
                 },
                 function(err) {
+                    Materialize.toast('Failed to add video', 4000);
                     console.log('[add] error:', err);
                 }
             );
