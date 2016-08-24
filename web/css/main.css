@@ -58,7 +58,14 @@ h5 {
 
 .collection-item > button {
 	/* slightly adjust the vertical centering of the button */
+	margin: 0 5px;
 	margin-top: -2px;
+}
+
+.collection-item > a {
+	/* slightly adjust the vertical centering of the link */
+	margin: 0 5px;
+	margin-top: 5px;
 }
 
 .title {
