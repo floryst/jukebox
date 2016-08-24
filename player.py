@@ -136,6 +136,8 @@ class JukeboxPlayer(ApplicationSession):
 
     @inlineCallbacks
     def stop(self):
+        if self.current_song = '':
+            return True
         self.player.set_state(Gst.State.NULL)
         res = yield self.wait_for_state(Gst.State.NULL)
         if res:

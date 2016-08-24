@@ -88,7 +88,7 @@
         self.playOrStopSong = function(songId) {
             if (self.player_state.currently_playing() == songId) {
                 // stop the song
-                self.session.call('com.forrestli.jukebox.stop').then(
+                self.session.call('com.forrestli.jukebox.player.stop').then(
                     function(res) {
                         console.log('[stop] res:', res);
                     },
@@ -202,7 +202,7 @@
         this.player_state.currently_playing(songId);
     };
 
-    JukeboxApp.prototype.onPlayerStop= function() {
+    JukeboxApp.prototype.onPlayerStop = function() {
         this.player_state.currently_playing('');
     };
 
