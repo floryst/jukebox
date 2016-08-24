@@ -13,8 +13,9 @@
             volume: ko.observable(-1),
             position: ko.observable(-1),
         };
+    };
 
-        this.currentlyPlayingText = ko.computed(function() {
+    JukeboxApp.prototype.currentlyPlayingText = ko.computed(function() {
             if (this.player_state.currently_playing == '') {
                 return 'Nothing playing!';
             }
