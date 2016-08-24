@@ -30,6 +30,22 @@
             }
         }, self);
 
+        self.playlistSongBtnState = function(songId) {
+            return ko.computed(function() {
+                if (self.player_state.currently_playing() == songId) {
+                    if (self.player_state.paused()) {
+                        return 'play_arrow';
+                    }
+                    else {
+                        return 'pause';
+                    }
+                }
+                else {
+                    return 'play_arrow';
+                }
+            });
+        };
+
         self.addSong = function(formElement) {
             var url = formElement.elements['youtubeURL'].value;
             formElement.elements['youtubeURL submit'].disabled = true;
