@@ -87,3 +87,8 @@ h5 {
 :-ms-input-placeholder {  
 	color: #444;  
 }
+
+#top-loading {
+	margin: 0;
+	position: absolute;
+}

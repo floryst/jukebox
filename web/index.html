@@ -19,6 +19,9 @@
 
 <body ng-app="jukebox">
     <!-- Navbar goes here -->
+    <div id="top-loading" class="progress" data-bind="visible: isLoading">
+        <div class="indeterminate"></div>
+    </div>
     <nav>
         <div class="nav-wrapper headerbar no-margin">
             <div class="valign-wrapper row no-margin">

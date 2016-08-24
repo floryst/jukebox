@@ -15,6 +15,7 @@
             volume: ko.observable(-1),
             position: ko.observable(-1),
         };
+        self.isLoading = ko.observable(false);
 
         self.currentlyPlayingText = ko.pureComputed(function() {
             var currently_playing = self.player_state.currently_playing();
@@ -122,6 +123,27 @@
         connection.onopen = function(session, details) {
             console.log('Connected');
             self.session = session;
+
+            self.session.__call = self.session.call;
+            self.session.call = function(queue, args) {
+                var timer = window.setTimeout(function() {
+                    self.isLoading(true);
+                }, 500);
+                return self.session.__call(queue, args).then(
+                    function(res) {
+                        window.clearTimeout(timer);
+                        self.isLoading(false);
+                        console.log(self.isLoading());
+                        return res;
+                    },
+                    function(err) {
+                        window.clearTimeout(timer);
+                        self.isLoading(false);
+                        console.log(self.isLoading());
+                        throw res;
+                    }
+                );
+            };
 
             session.call('com.forrestli.jukebox.get_playlist').then(
                     function(playlist) {
