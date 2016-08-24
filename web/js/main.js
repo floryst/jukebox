@@ -37,7 +37,7 @@
                         return 'play_arrow';
                     }
                     else {
-                        return 'pause';
+                        return 'stop';
                     }
                 }
                 else {
@@ -74,16 +74,23 @@
             });
         };
 
-        self.playSong = function(songId) {
-            self.session.call('com.forrestli.jukebox.play', [songId]).then(
-                function(res) {
-                    console.log('[play] res:', res);
-                },
-                function(err) {
-                    Materialize.toast('Failed to play song', 4000);
-                    console.log('[play] error:', err);
-                }
-            );
+        self.playOrStopSong = function(songId) {
+            if (self.player_state.currently_playing() == songId) {
+                // stop the song
+                console.log('STOP');
+            }
+            else {
+                // play the song
+                self.session.call('com.forrestli.jukebox.play', [songId]).then(
+                    function(res) {
+                        console.log('[play] res:', res);
+                    },
+                    function(err) {
+                        Materialize.toast('Failed to play song', 4000);
+                        console.log('[play] error:', err);
+                    }
+                );
+            }
         };
 
         self.togglePause = function() {

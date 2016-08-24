@@ -115,7 +115,7 @@
                 <ul class="collection" data-bind="foreach: playlist">
                     <li class="collection-item">
                         <button class="btn-floating waves-effect waves-light red collection-center no-shadow"
-                            data-bind="click: $parent.playSong.bind($data, $data.id)">
+                            data-bind="click: $parent.playOrStopSong.bind($data, $data.id)">
                             <i class="material-icons"
                                 data-bind="text: $parent.playlistSongBtnState($data.id)"></i>
                         </button>
