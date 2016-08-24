@@ -56,9 +56,13 @@ h5 {
 	margin-right: 8vh;
 }
 
+.play-button {
+	/* slightly adjust the vertical centering of the button */
+	margin-top: -2px;
+}
+
 .title {
-	/* I'm cheating here, I know it. */
-	padding-top: 15px;
+	margin-left: 10px;
 }
 
 ::-webkit-input-placeholder {
