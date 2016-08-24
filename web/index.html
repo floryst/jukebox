@@ -13,7 +13,7 @@
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.1/js/materialize.min.js"></script>
     <script src="http://autobahn.s3.amazonaws.com/autobahnjs/latest/autobahn.min.jgz"></script>
-    <script src="js/bind.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js"></script>
     <link href="css/main.css" type="text/css" rel="stylesheet">
 </head>
 
@@ -54,6 +54,13 @@
             <div class="remote expand no-margin">
                 <div class="valign-wrapper center-align">
                     <div class="row">
+                        <div class="row">
+                            <div class="col s12">
+                                <div class="card-panel teal">
+                                    <span id="currently-playing" class="white-text"></span>
+                                </div>
+                            </div>
+                        </div>
                         <div class="row">
                             <div class="col s4">
                                 <button class=" waves-effect waves-light btn"><i class="fa fa-2x fa-fast-backward" id="backwards"></i></button>
