@@ -92,3 +92,10 @@ h5 {
 	margin: 0;
 	position: absolute;
 }
+
+#volume-icon {
+	/* yay hacky fixed pixel adjustments */
+	margin-top: 15px;
+	margin-left: 10px;
+	color: white;
+}

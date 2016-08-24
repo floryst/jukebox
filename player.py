@@ -90,7 +90,7 @@ class JukeboxPlayer(ApplicationSession):
                 playing_state == Gst.State.PLAYING and \
                 pending == Gst.State.VOID_PENDING
 
-        volume = self.player.get_property('volume')
+        volume = self.player.get_property('volume') * 100
 
         state, position = self.player.query_position(Gst.Format.TIME)
         if not state:
