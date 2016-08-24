@@ -138,6 +138,7 @@ class JukeboxPlayer(ApplicationSession):
         res = yield self.wait_for_state(Gst.State.NULL)
         if res:
             yield self.publish('com.forrestli.jukebox.event.player.stop')
+            self.current_song = ''
         return res
 
     @inlineCallbacks
