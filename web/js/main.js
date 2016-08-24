@@ -8,7 +8,7 @@
         var self = this;
 
         self.session = null;
-        self.playlist = Array();
+        self.playlist = ko.observable(Array());
         self.player_state = {
             currently_playing: '',
             paused: ko.observable(false),
@@ -25,8 +25,6 @@
             }
         }, self);
 
-
-
         var connection = new autobahn.Connection({
             url: 'ws://127.0.0.1:8080/ws',
             realm: 'realm1'
@@ -38,8 +36,7 @@
 
             session.call('com.forrestli.jukebox.get_playlist').then(
                     function(playlist) {
-                        self.playlist = playlist;
-                        //app.renderPlaylist();
+                        self.playlist(playlist);
                     },
                     function(err) {
                         console.log('[get_playlist] error:', err);

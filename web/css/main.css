@@ -55,3 +55,8 @@ h5 {
 {
 	margin-right: 8vh;
 }
+
+.title {
+	/* I'm cheating here, I know it. */
+	padding-top: 15px;
+}
