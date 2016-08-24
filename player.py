@@ -60,13 +60,26 @@ class JukeboxPlayer(ApplicationSession):
         yield self.register(self.set_volume,
                 'com.forrestli.jukebox.player.set_volume')
 
+    @inlineCallbacks
     def _bus_watcher(self, bus, msg):
         if msg.type == Gst.MessageType.ERROR:
             self.log.info('[player] error: {error}', error=msg.parse_error())
         elif msg.type == Gst.MessageType.EOS:
             self.player.set_state(Gst.State.READY)
-            yield self.wait_for_state(Gst.State.READY)
-            self.publish('com.forrestli.jukebox.event.player.finished')
+            res = yield self.wait_for_state(Gst.State.READY)
+            if res:
+                self.publish('com.forrestli.jukebox.event.player.finished')
+            else:
+                self.log.info('[bus_watcher] failed to terminate song')
+        elif msg.type == Gst.MessageType.BUFFERING:
+            # as per https://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-plugins/html/gst-plugins-base-plugins-playbin.html,
+            # specifically the part on buffering.
+            percent = msg.parse_buffering()
+            if percent < 100:
+                self.player.set_state(Gst.State.PAUSED)
+                # TODO broadcast buffering state here
+            else:
+                self.player.set_state(Gst.State.PLAYING)
 
     @inlineCallbacks
     def wait_for_state(self, gst_state):
