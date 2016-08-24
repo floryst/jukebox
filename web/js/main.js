@@ -44,12 +44,7 @@
         self.playlistSongBtnState = function(songId) {
             return ko.computed(function() {
                 if (self.player_state.currently_playing() == songId) {
-                    if (self.player_state.paused()) {
-                        return 'play_arrow';
-                    }
-                    else {
-                        return 'stop';
-                    }
+                    return 'stop';
                 }
                 else {
                     return 'play_arrow';
@@ -175,6 +170,8 @@
                     self.onPlayerPlay.bind(self));
             session.subscribe('com.forrestli.jukebox.event.player.stop',
                     self.onPlayerStop.bind(self));
+            session.subscribe('com.forrestli.jukebox.event.player.toggle_pause',
+                    self.onPlayerTogglePause.bind(self));
         };
 
         connection.onclose = function(reason, details) {
@@ -196,6 +193,11 @@
 
     JukeboxApp.prototype.onPlayerStop = function() {
         this.player_state.currently_playing('');
+    };
+
+    JukeboxApp.prototype.onPlayerTogglePause = function() {
+        var newState = ! this.player_state.paused()
+        this.player_state.paused(newState);
     };
 
     ko.applyBindings(new JukeboxApp());
