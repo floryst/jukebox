@@ -10,20 +10,32 @@
         self.session = null;
         self.playlist = ko.observable(Array());
         self.player_state = {
-            currently_playing: '',
+            currently_playing: ko.observable(''),
             paused: ko.observable(false),
             volume: ko.observable(-1),
             position: ko.observable(-1),
         };
 
         self.currentlyPlayingText = ko.computed(function() {
-            if (self.player_state.currently_playing == '') {
+            if (self.player_state.currently_playing() == '') {
                 return 'Nothing playing!';
             }
             else {
-                return self.player_state.currently_playing;
+                return self.player_state.currently_playing();
             }
         }, self);
+
+        self.addSong = function(formElement) {
+            var url = formElement.elements['youtubeURL'].value;
+            self.session.call('com.forrestli.jukebox.add', [url]).then(
+                function(res) {
+                    formElement.elements['youtubeURL'].value = '';
+                },
+                function(err) {
+                    console.log('[add] error:', err);
+                }
+            );
+        };
 
         var connection = new autobahn.Connection({
             url: 'ws://127.0.0.1:8080/ws',
@@ -45,8 +57,11 @@
 
             session.call('com.forrestli.jukebox.player.get_state').then(
                     function(state) {
-                        //self.player_state = state;
-                        //app.renderPlayer();
+                        self.player_state.currently_playing(
+                                state.currently_playing);
+                        self.player_state.paused(state.paused);
+                        self.player_state.volume(state.volume);
+                        self.player_state.position(state.position);
                     },
                     function(err) {
                         console.log('[get_playlist] error:', err);
