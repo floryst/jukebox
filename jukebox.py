@@ -32,6 +32,7 @@ class Jukebox(ApplicationSession):
         yield self.register(self.add, 'com.forrestli.jukebox.add')
         yield self.register(self.remove, 'com.forrestli.jukebox.remove')
         yield self.register(self.play, 'com.forrestli.jukebox.play')
+        yield self.register(self.stop, 'com.forrestli.jukebox.stop')
         yield self.register(self.moveup, 'com.forrestli.jukebox.moveup')
         yield self.register(self.toggle_pause,
                 'com.forrestli.jukebox.toggle_pause')
@@ -76,6 +77,11 @@ class Jukebox(ApplicationSession):
 
         res = yield self.call('com.forrestli.jukebox.player.play',
             song_id, info['play_url'])
+        return res
+
+    @inlineCallbacks
+    def stop(self):
+        res = yield self.call('com.forrestli.jukebox.player.stop')
         return res
 
     @inlineCallbacks

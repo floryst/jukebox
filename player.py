@@ -53,6 +53,8 @@ class JukeboxPlayer(ApplicationSession):
                 'com.forrestli.jukebox.player.get_state')
         yield self.register(self.play,
                 'com.forrestli.jukebox.player.play')
+        yield self.register(self.stop,
+                'com.forrestli.jukebox.player.stop')
         yield self.register(self.toggle_pause,
                 'com.forrestli.jukebox.player.toggle_pause')
 
@@ -129,6 +131,14 @@ class JukeboxPlayer(ApplicationSession):
 
         yield self.publish('com.forrestli.jukebox.event.player.play', song_id)
         return True
+
+    @inlineCallbacks
+    def stop(self):
+        self.player.set_state(Gst.State.NULL)
+        res = yield self.wait_for_state(Gst.State.NULL)
+        if res:
+            yield self.publish('com.forrestli.jukebox.event.player.stop')
+        return res
 
     @inlineCallbacks
     def toggle_pause(self):

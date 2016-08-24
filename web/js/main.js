@@ -77,7 +77,16 @@
         self.playOrStopSong = function(songId) {
             if (self.player_state.currently_playing() == songId) {
                 // stop the song
-                console.log('STOP');
+                self.session.call('com.forrestli.jukebox.stop').then(
+                    function(res) {
+                        console.log('[stop] res:', res);
+                    },
+                    function(err) {
+                        Materialize.toast('Failed to stop song', 4000);
+                        console.log('[stop] error:', err);
+                    }
+                );
+
             }
             else {
                 // play the song
@@ -140,6 +149,8 @@
                     self.onPlaylistAdd.bind(self));
             session.subscribe('com.forrestli.jukebox.event.player.play',
                     self.onPlayerPlay.bind(self));
+            session.subscribe('com.forrestli.jukebox.event.player.stop',
+                    self.onPlayerStop.bind(self));
         };
 
         connection.onclose = function(reason, details) {
@@ -157,6 +168,10 @@
     JukeboxApp.prototype.onPlayerPlay = function(msg) {
         var songId = msg[0];
         this.player_state.currently_playing(songId);
+    };
+
+    JukeboxApp.prototype.onPlayerStop= function() {
+        this.player_state.currently_playing('');
     };
 
     ko.applyBindings(new JukeboxApp());
