@@ -109,10 +109,10 @@
         <div class="col s12 m8 l9 expand">
             <div class="song-container expand">
                 <ul class="collection" data-bind="foreach: playlist">
-                    <li class="collection-item valign-wrapper">
-                        <button class="btn-floating waves-effect waves-light red collection-center no-shadow play-button"><i class="material-icons">play_arrow</i></button>
-                        <div class="title valign" data-bind="text: title"></div>
-                        <div style="clear: both"></div>
+                    <li class="collection-item">
+                        <button class="btn-floating waves-effect waves-light red collection-center no-shadow"><i class="material-icons">play_arrow</i></button>
+                        <span class="title" data-bind="text: title"></span>
+                        <button class="btn-floating waves-effect waves-light red collection-center secondary-content no-shadow"><i class="material-icons">info</i></button>
                     </li>
                 </ul>
             </div>

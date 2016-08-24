@@ -56,7 +56,7 @@ h5 {
 	margin-right: 8vh;
 }
 
-.play-button {
+.collection-item > button {
 	/* slightly adjust the vertical centering of the button */
 	margin-top: -2px;
 }
