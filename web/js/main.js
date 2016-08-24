@@ -4,18 +4,29 @@
         return document.getElementById(ident);
     };
 
-    window.JukeboxApp = app = {
-
-        session: null,
-        playlist: Array(),
-        player_state: Bind({
+    var JukeboxApp = function() {
+        this.session = null;
+        this.playlist = Array();
+        this.player_state = {
             currently_playing: '',
-            is_playing: false,
-            volume: -1,
-            position: -1,
-        }, {
-            'volume': '#volume-slider'
-        }),
+            paused: ko.observable(false),
+            volume: ko.observable(-1),
+            position: ko.observable(-1),
+        };
+
+        this.currentlyPlayingText = ko.computed(function() {
+            if (this.player_state.currently_playing == '') {
+                return 'Nothing playing!';
+            }
+            else {
+                return this.player_state.currently_playing;
+            }
+        }, this);
+    };
+
+    ko.applyBindings(new JukeboxApp());
+
+    window.JukeboxApp = app = {
 
         init: function() {
             var connection = new autobahn.Connection({
@@ -181,6 +192,6 @@
         },
     };
 
-    app.init();
+    //app.init();
 
 })(window, document, jQuery);
