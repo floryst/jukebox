@@ -127,7 +127,7 @@ class JukeboxPlayer(ApplicationSession):
             if not success:
                 return False
         else:
-            self.log.info('[player] cannot play due to pending state: {state}',
+            self.log.info('[player.play] cannot play due to pending state: {state}',
                     state=pending)
             return False
 
@@ -136,7 +136,7 @@ class JukeboxPlayer(ApplicationSession):
 
     @inlineCallbacks
     def stop(self):
-        if self.current_song = '':
+        if self.current_song == '':
             return True
         self.player.set_state(Gst.State.NULL)
         res = yield self.wait_for_state(Gst.State.NULL)
@@ -147,6 +147,23 @@ class JukeboxPlayer(ApplicationSession):
 
     @inlineCallbacks
     def toggle_pause(self):
+        _, state, pending = self.player.get_state(1)
+        if pending == Gst.State.VOID_PENDING:
+            if state == Gst.State.PLAYING:
+                new_state = Gst.State.PAUSED
+            elif state == Gst.State.PAUSED:
+                new_state = Gst.State.PLAYING
+            else:
+                return False
+            self.player.set_state(new_state)
+            success = yield self.wait_for_state(new_state)
+            if not success:
+                return False
+        else:
+            self.log.info('[player.toggle_pause] cannot play due to pending state: {state}',
+                    state=pending)
+            return False
+
         yield self.publish('com.forrestli.jukebox.event.player.toggle_pause')
         return True
 
