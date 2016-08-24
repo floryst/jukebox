@@ -38,13 +38,15 @@ class JukeboxPlayer(ApplicationSession):
             Gtk.main()
         threading.Thread(target=run_player).start()
 
+        @inlineCallbacks
         def monitor_player():
             while True:
                 time.sleep(1)
                 state, pos = self.player.query_position(Gst.Format.TIME)
                 if not state:
                     continue
-                self.position = pos
+                # convert from nanoseconds to seconds
+                pos /= 1e9
                 yield self.publish(
                         'com.forrestli.jukebox.event.player.position', pos)
         threading.Thread(target=monitor_player).start()
@@ -110,17 +112,15 @@ class JukeboxPlayer(ApplicationSession):
         state, position = self.player.query_position(Gst.Format.TIME)
         if not state:
             position = None
-
-        state, duration = self.player.query_position(Gst.Format.TIME)
-        if not state:
-            duration = None
+        else:
+            # convert from nanoseconds to seconds
+            position /= 1e9
 
         return {
             'currently_playing': self.current_song,
             'is_playing': is_playing,
             'volume': volume,
-            'position': position,
-            'duration': duration
+            'position': position
         }
 
     @inlineCallbacks

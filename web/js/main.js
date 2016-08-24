@@ -11,11 +11,33 @@
         self.playlist = ko.observableArray();
         self.player_state = {
             currently_playing: ko.observable(''),
+            _currently_playing_song: null,
             paused: ko.observable(false),
             volume: ko.observable(-1),
             position: ko.observable(-1),
         };
         self.isLoading = ko.observable(false);
+
+        self.getCurrentSong = function() {
+            var songId = self.player_state.currently_playing();
+            if (songId == '') {
+                return null;
+            }
+            else if (self.player_state._currently_playing_song == null ||
+                    self.player_state._currently_playing_song.id != songId) {
+                for (var i = 0; i < self.playlist().length; i++) {
+                    if (self.playlist()[i].id == songId) {
+                        self.player_state._currently_playing_song =
+                            self.playlist()[i];
+                        return self.playlist()[i];
+                    }
+                }
+                console.error('Could not find song id', songId);
+            }
+            else {
+                return self.player_state._currently_playing_song;
+            }
+        };
 
         self.player_state.volume.subscribe(function(volume) {
             self.session.call('com.forrestli.jukebox.player.set_volume',
@@ -33,10 +55,12 @@
                 return 'Nothing playing!';
             }
             else {
-                for (var i = 0; i < self.playlist().length; i++) {
-                    if (self.playlist()[i].id == currently_playing) {
-                        return self.playlist()[i].title;
-                    }
+                try {
+                    return self.getCurrentSong().title;
+                }
+                catch (e) {
+                    console.error(e);
+                    console.log(self.getCurrentSong());
                 }
             }
         }, self);
@@ -54,6 +78,10 @@
 
         self.isPlaying = ko.pureComputed(function() {
             return self.player_state.currently_playing() != '';
+        });
+
+        self.positionText = ko.pureComputed(function() {
+            return String(100 * self.player_state.position()) + '%';
         });
 
         self.btnPlayPauseText = ko.pureComputed(function() {
@@ -149,20 +177,24 @@
                     function(err) {
                         console.error('[get_playlist] error:', err);
                     }
-            );
-
-            session.call('com.forrestli.jukebox.player.get_state').then(
-                    function(state) {
-                        self.player_state.currently_playing(
-                                state.currently_playing);
-                        self.player_state.paused(state.paused);
-                        self.player_state.volume(state.volume);
-                        self.player_state.position(state.position);
-                    },
-                    function(err) {
-                        console.error('[get_playlist] error:', err);
-                    }
-            );
+            ).then(function() {
+                session.call('com.forrestli.jukebox.player.get_state').then(
+                        function(state) {
+                            self.player_state.currently_playing(
+                                    state.currently_playing);
+                            self.player_state.paused(state.paused);
+                            self.player_state.volume(state.volume);
+                            if (state.currently_playing != '') {
+                                var position = state.position /
+                                    self.getCurrentSong().duration;
+                                self.player_state.position(position);
+                            }
+                        },
+                        function(err) {
+                            console.error('[get_playlist] error:', err);
+                        }
+                );
+            });
 
             session.subscribe('com.forrestli.jukebox.event.playlist.add',
                     self.onPlaylistAdd.bind(self));
@@ -172,6 +204,8 @@
                     self.onPlayerStop.bind(self));
             session.subscribe('com.forrestli.jukebox.event.player.toggle_pause',
                     self.onPlayerTogglePause.bind(self));
+            session.subscribe('com.forrestli.jukebox.event.player.position',
+                    self.onPlayerPosition.bind(self));
         };
 
         connection.onclose = function(reason, details) {
@@ -198,6 +232,12 @@
     JukeboxApp.prototype.onPlayerTogglePause = function() {
         var newState = ! this.player_state.paused()
         this.player_state.paused(newState);
+    };
+
+    JukeboxApp.prototype.onPlayerPosition = function(position) {
+        position = position[0];
+        var normalized = position / this.getCurrentSong().duration;
+        this.player_state.position(normalized);
     };
 
     ko.applyBindings(new JukeboxApp());
