@@ -8,12 +8,14 @@
 
         session: null,
         playlist: Array(),
-        player_state: {
+        player_state: Bind({
             currently_playing: '',
             is_playing: false,
             volume: -1,
             position: -1,
-        },
+        }, {
+            'volume': '#volume-slider'
+        }),
 
         init: function() {
             var connection = new autobahn.Connection({
