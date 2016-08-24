@@ -8,7 +8,7 @@
         var self = this;
 
         self.session = null;
-        self.playlist = ko.observable(Array());
+        self.playlist = ko.observableArray();
         self.player_state = {
             currently_playing: ko.observable(''),
             paused: ko.observable(false),
@@ -27,6 +27,7 @@
 
         self.addSong = function(formElement) {
             var url = formElement.elements['youtubeURL'].value;
+            formElement.elements['youtubeURL submit'].disabled = true;
             self.session.call('com.forrestli.jukebox.add', [url]).then(
                 function(res) {
                     formElement.elements['youtubeURL'].value = '';
@@ -35,7 +36,9 @@
                     Materialize.toast('Failed to add song', 4000);
                     console.log('[add] error:', err);
                 }
-            );
+            ).then(function() {
+                formElement.elements['youtubeURL submit'].disabled = false;
+            });
         };
 
         self.playSong = function(songId) {
@@ -81,14 +84,12 @@
                     }
             );
 
-            /*
             session.subscribe('com.forrestli.jukebox.event.playlist.add',
-                    self.onPlaylistAdd);
+                    self.onPlaylistAdd.bind(self));
             session.subscribe('com.forrestli.jukebox.event.playlist.moveup',
-                    self.onPlaylistMoveUp);
+                    self.onPlaylistMoveUp.bind(self));
             session.subscribe('com.forrestli.jukebox.event.player.play',
-                    app.onPlayerPlay);
-                    */
+                    app.onPlayerPlay.bind(self));
         };
 
         connection.onclose = function(reason, details) {
@@ -97,6 +98,24 @@
         };
 
         connection.open();
+    };
+
+    JukeboxApp.prototype.onPlaylistAdd = function(songs) {
+        console.log(songs);
+        this.playlist(this.playlist().concat(songs));
+    };
+
+    JukeboxApp.prototype.onPlaylistMoveUp = function(song_pos) {
+        var song = app.playlist[song_pos];
+        app.playlist.splice(song_pos, 1);
+        app.playlist.splice(song_pos-1, 0, song);
+        app.renderPlaylist();
+    };
+
+    JukeboxApp.prototype.onPlayerPlay = function(msg) {
+        var songId = msg[0];
+        app.player_state.currently_playing = songId;
+        app.renderPlaylist();
     };
 
     ko.applyBindings(new JukeboxApp());
@@ -157,24 +176,6 @@
                         console.log('[moveup] error:', err);
                     }
             );
-        },
-
-        onPlaylistAdd: function(songs) {
-            app.playlist = app.playlist.concat(songs);
-            app.renderPlaylist();
-        },
-
-        onPlaylistMoveUp: function(song_pos) {
-            var song = app.playlist[song_pos];
-            app.playlist.splice(song_pos, 1);
-            app.playlist.splice(song_pos-1, 0, song);
-            app.renderPlaylist();
-        },
-
-        onPlayerPlay: function(msg) {
-            var songId = msg[0];
-            app.player_state.currently_playing = songId;
-            app.renderPlaylist();
         },
 
         addVideo: function() {
