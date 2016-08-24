@@ -32,8 +32,20 @@
                     formElement.elements['youtubeURL'].value = '';
                 },
                 function(err) {
-                    Materialize.toast('Failed to add video', 4000);
+                    Materialize.toast('Failed to add song', 4000);
                     console.log('[add] error:', err);
+                }
+            );
+        };
+
+        self.playSong = function(songId) {
+            self.session.call('com.forrestli.jukebox.play', [songId]).then(
+                function(res) {
+                    console.log('[play] res:', res);
+                },
+                function(err) {
+                    Materialize.toast('Failed to play song', 4000);
+                    console.log('[play] error:', err);
                 }
             );
         };

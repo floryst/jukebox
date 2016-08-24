@@ -110,7 +110,8 @@
             <div class="song-container expand">
                 <ul class="collection" data-bind="foreach: playlist">
                     <li class="collection-item">
-                        <button class="btn-floating waves-effect waves-light red collection-center no-shadow"><i class="material-icons">play_arrow</i></button>
+                        <button class="btn-floating waves-effect waves-light red collection-center no-shadow"
+                            data-bind="click: $parent.playSong.bind($data, $data.id)"><i class="material-icons">play_arrow</i></button>
                         <span class="title" data-bind="text: title"></span>
                         <a href="#!" class="secondary-content"><i class="material-icons">close</i></a>
                         <button class="btn-floating waves-effect waves-light red collection-center secondary-content no-shadow"><i class="material-icons">link</i></button>
