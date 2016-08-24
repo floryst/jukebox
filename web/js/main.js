@@ -22,7 +22,7 @@
                     [volume]).then(
                 function(res) { },
                 function(err) {
-                    console.log('[volume] error:', err);
+                    console.error('[volume] error:', err);
                 }
             );
         });
@@ -78,7 +78,7 @@
                 },
                 function(err) {
                     Materialize.toast('Failed to add song', 4000);
-                    console.log('[add] error:', err);
+                    console.error('[add] error:', err);
                 }
             ).then(function() {
                 formElement.elements['youtubeURL submit'].disabled = false;
@@ -89,12 +89,10 @@
             if (self.player_state.currently_playing() == songId) {
                 // stop the song
                 self.session.call('com.forrestli.jukebox.player.stop').then(
-                    function(res) {
-                        console.log('[stop] res:', res);
-                    },
+                    function(res) { },
                     function(err) {
                         Materialize.toast('Failed to stop song', 4000);
-                        console.log('[stop] error:', err);
+                        console.error('[stop] error:', err);
                     }
                 );
 
@@ -102,12 +100,10 @@
             else {
                 // play the song
                 self.session.call('com.forrestli.jukebox.play', [songId]).then(
-                    function(res) {
-                        console.log('[play] res:', res);
-                    },
+                    function(res) { },
                     function(err) {
                         Materialize.toast('Failed to play song', 4000);
-                        console.log('[play] error:', err);
+                        console.error('[play] error:', err);
                     }
                 );
             }
@@ -115,12 +111,10 @@
 
         self.togglePause = function() {
             self.session.call('com.forrestli.jukebox.toggle_pause').then(
-                function(res) {
-                    console.log('[toggle_pause] res:', res);
-                },
+                function(res) { },
                 function(err) {
                     Materialize.toast('Failed to toggle pause', 4000);
-                    console.log('[toggle_pause] error:', err);
+                    console.error('[toggle_pause] error:', err);
                 }
             );
         };
@@ -131,7 +125,7 @@
         });
 
         connection.onopen = function(session, details) {
-            console.log('Connected');
+            console.info('Connected');
             self.session = session;
 
             self.session.__call = self.session.call;
@@ -143,13 +137,11 @@
                     function(res) {
                         window.clearTimeout(timer);
                         self.isLoading(false);
-                        console.log(self.isLoading());
                         return res;
                     },
                     function(err) {
                         window.clearTimeout(timer);
                         self.isLoading(false);
-                        console.log(self.isLoading());
                         throw err;
                     }
                 );
@@ -160,7 +152,7 @@
                         self.playlist(playlist);
                     },
                     function(err) {
-                        console.log('[get_playlist] error:', err);
+                        console.error('[get_playlist] error:', err);
                     }
             );
 
@@ -173,7 +165,7 @@
                         self.player_state.position(state.position);
                     },
                     function(err) {
-                        console.log('[get_playlist] error:', err);
+                        console.error('[get_playlist] error:', err);
                     }
             );
 
@@ -186,7 +178,7 @@
         };
 
         connection.onclose = function(reason, details) {
-            console.log('Connection lost:', reason);
+            console.error('Connection lost:', reason);
             self.session = null;
         };
 
