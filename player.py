@@ -87,7 +87,7 @@ class JukeboxPlayer(ApplicationSession):
             res = yield self.wait_for_state(Gst.State.READY)
             if res:
                 self.current_song = ''
-                self.publish('com.forrestli.jukebox.event.player.finished',
+                yield self.publish('com.forrestli.jukebox.event.player.finished',
                         self.current_song)
             else:
                 self.log.info('[bus_watcher] failed to terminate song')
