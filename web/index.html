@@ -33,7 +33,7 @@
                 </div>
                 <div class="col s8 progressBarContainer hide-on-med-and-down" id="songProgressBar">
                     <div class="progress">
-                        <div class="determinate"
+                        <div class="determinate blue lighten-2"
                             data-bind="style: { width: positionText }"></div>
                     </div>
                 </div>
@@ -107,7 +107,7 @@
                                         <input placeholder="Youtube URL" id="youtubeURL" type="text" class="validate">
                                     </div>
                                     <div class="col s12">
-                                        <button class="btn-floating btn-large waves-effect waves-light red"
+                                        <button class="btn-floating btn-large waves-effect waves-light green"
                                             type="submit" name="action" id="youtubeURL submit">
                                             <i class="material-icons right">add</i>
                                         </button>
@@ -124,7 +124,7 @@
             <div class="song-container expand">
                 <ul class="collection" data-bind="foreach: playlist">
                     <li class="collection-item">
-                        <button class="btn-floating waves-effect waves-light red collection-center no-shadow"
+                        <button class="btn-floating waves-effect waves-light green collection-center no-shadow"
                             data-bind="click: $parent.playOrStopSong.bind($data, $data.id)">
                             <i class="material-icons"
                                 data-bind="text: $parent.playlistSongBtnState($data.id)"></i>
