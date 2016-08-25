@@ -1,3 +1,4 @@
+import os
 import pprint
 import sys
 
@@ -16,11 +17,26 @@ import model_transformer
 
 PLAYLIST_STORE = 'playlist.json'
 
+PRINCIPAL = ''
+PRINCIPAL_TICKET  = ''
+
+if 'JUKEBOX_SERVER_PRINCIPAL' in os.environ:
+    PRINCIPAL = os.environ['JUKEBOX_SERVER_PRINCIPAL']
+if 'JUKEBOX_SERVER_PRINCIPAL_TICKET' in os.environ:
+    PRINCIPAL_TICKET = os.environ['JUKEBOX_SERVER_PRINCIPAL_TICKET']
+
 pp = pprint.PrettyPrinter(indent=2)
 
 class Jukebox(ApplicationSession):
 
     log = Logger()
+
+    def onConnect(self):
+        self.join(self.config.realm, [u'ticket'], PRINCIPAL)
+
+    def onChallenge(self, challenge):
+        if challenge.method == u'ticket':
+            return PRINCIPAL_TICKET
 
     @inlineCallbacks
     def onJoin(self, details):

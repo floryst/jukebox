@@ -3,16 +3,59 @@
     "workers": [
         {
             "type": "router",
+            "options": {
+                "pythonpath": [
+                    ".."
+                ]
+            },
             "realms": [
                 {
-                    "name": "realm1",
+                    "name": "jukebox_realm",
                     "roles": [
+                        {
+                            "name": "authenticator",
+                            "permissions": [
+                                {
+                                    "uri": "com.forrestli.jukebox.authenticate",
+                                    "match": "exact",
+                                    "allow": {
+                                        "call": false,
+                                        "register": true,
+                                        "publish": false,
+                                        "subscribe": false
+                                    },
+                                    "disclose": {
+                                        "caller": false,
+                                        "publisher": false
+                                    },
+                                    "cache": true
+                                }
+                            ]
+                        },
                         {
                             "name": "anonymous",
                             "permissions": [
                                 {
-                                    "uri": "",
-                                    "match": "prefix",
+                                    "uri": "com.forrestli.jukebox.*",
+                                    "allow": {
+                                        "call": true,
+                                        "register": false,
+                                        "publish": false,
+                                        "subscribe": true
+                                    },
+                                    "disclose": {
+                                        "caller": false,
+                                        "publisher": false
+                                    },
+                                    "cache": true
+                                }
+                            ]
+                        },
+                        {
+                            "name": "server",
+                            "permissions": [
+                                {
+                                    "uri": "com.forrestli.jukebox.*",
                                     "allow": {
                                         "call": true,
                                         "register": true,
@@ -43,9 +86,23 @@
                             "directory": "../web"
                         },
                         "ws": {
-                            "type": "websocket"
+                            "type": "websocket",
+                            "auth": {
+                                "ticket": {
+                                    "type": "dynamic",
+                                    "authenticator": "com.forrestli.jukebox.authenticate"
+                                }
+                            }
                         }
                     }
+                }
+            ],
+            "components": [
+                {
+                    "type": "class",
+                    "classname": "authenticator.Authenticator",
+                    "realm": "jukebox_realm",
+                    "role": "authenticator"
                 }
             ]
         },
@@ -60,7 +117,7 @@
                 {
                     "type": "class",
                     "classname": "jukebox.Jukebox",
-                    "realm": "realm1",
+                    "realm": "jukebox_realm",
                     "transport": {
                         "type": "websocket",
                         "endpoint": {
