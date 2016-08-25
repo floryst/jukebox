@@ -1,10 +1,22 @@
-body {
+body::after {
+	content: "";
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	position: absolute;
 	background: rgba(0, 0, 0, 0.2) url("../seamless-dark-wood-texture.jpg");
+	opacity: 0.8;
+	z-index: -99;
 }
 
 nav {
 	background: none;
 	box-shadow: none;
+}
+
+input {
+	color: white;
 }
 
 .no-margin{
@@ -79,19 +91,19 @@ h5 {
 }
 
 ::-webkit-input-placeholder {
-	color: #444;
+	color: #eee;
 }
 
 :-moz-placeholder { /* Firefox 18- */
-	color: #444;
+	color: #eee;
 }
 
 ::-moz-placeholder {  /* Firefox 19+ */
-	color: #444;
+	color: #eee;
 }
 
 :-ms-input-placeholder {  
-	color: #444;  
+	color: #eee;
 }
 
 #top-loading {
