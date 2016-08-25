@@ -90,6 +90,10 @@ h5 {
 	margin-left: 10px;
 }
 
+.sortable-ghost {
+	background-color: #ddd !important;
+}
+
 ::-webkit-input-placeholder {
 	color: white;
 }

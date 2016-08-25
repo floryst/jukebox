@@ -160,6 +160,34 @@
             Materialize.toast('Not implemented', 4000);
         };
 
+        self.draggablePlaylist = function() {
+            // dunno if I'll get a noticable performance hit for calling this
+            // every time the playlist is rendered
+            self.sortablePlaylist = Sortable.create($id('sortable-playlist'), {
+                sort: true,
+                ghostClass: 'sortable-ghost',
+                chosenClass: 'sortable-chosen',
+                scroll: true,
+                scrollSensitivity: 30,
+                scrollSpeed: 10,
+                dataIdAttr: 'data-id',
+                onStart: function(ev) {
+                    self._sortableOrder = self.sortablePlaylist.toArray();
+                },
+                onEnd: function(ev) {
+                    self.session.call('com.forrestli.jukebox.move_song',
+                            [ev.oldIndex, ev.newIndex]).then(
+                        function(res) { },
+                        function(err) {
+                            self.sortablePlaylist.sort(self._sortableOrder);
+                            Materialize.toast('Failed to move song', 4000);
+                            console.error('[move] error:', err);
+                        }
+                    );
+                }
+            });
+        };
+
         var onChallenge = function(session, method, extra) {
             if (method == 'ticket')
                 return 'password';

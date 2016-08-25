@@ -14,6 +14,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/js/materialize.min.js"></script>
     <script src="http://autobahn.s3.amazonaws.com/autobahnjs/latest/autobahn.min.jgz"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js"></script>
+    <script src="js/Sortable.min.js"></script>
     <link href="css/main.css" type="text/css" rel="stylesheet">
 </head>
 
@@ -122,8 +123,10 @@
         <!-- Main Content -->
         <div class="col s12 m8 l9 expand">
             <div class="song-container expand">
-                <ul class="collection" data-bind="foreach: playlist">
-                    <li class="collection-item">
+                <ul id="sortable-playlist" class="collection"
+                    data-bind="foreach: { data: playlist, afterRender: draggablePlaylist }">
+                    <li class="collection-item"
+                        data-bind="attr: { 'data-id': $data.id }">
                         <button class="btn-floating waves-effect waves-light green collection-center no-shadow"
                             data-bind="click: $parent.playOrStopSong.bind($data, $data.id)">
                             <i class="material-icons"
