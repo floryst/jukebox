@@ -77,7 +77,7 @@ class Playlist(object):
     def next_song(self, cur_song):
         for idx, song in enumerate(self.playlist):
             if song['id'] == cur_song:
-                if idx < len(self.playlist):
+                if idx < len(self.playlist) - 1:
                     return self.playlist[idx+1]['id']
                 break
         return None
