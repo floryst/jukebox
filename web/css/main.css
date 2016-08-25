@@ -91,19 +91,19 @@ h5 {
 }
 
 ::-webkit-input-placeholder {
-	color: #eee;
+	color: white;
 }
 
 :-moz-placeholder { /* Firefox 18- */
-	color: #eee;
+	color: white;
 }
 
 ::-moz-placeholder {  /* Firefox 19+ */
-	color: #eee;
+	color: white;
 }
 
 :-ms-input-placeholder {  
-	color: #eee;
+	color: white;
 }
 
 #top-loading {
