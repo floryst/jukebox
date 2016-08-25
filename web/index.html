@@ -133,7 +133,10 @@
                             data-bind="click: $parent.removeSong.bind($data, $data.id)">
                             <i class="material-icons">close</i>
                         </a>
-                        <button class="btn-floating waves-effect waves-light red collection-center secondary-content no-shadow"><i class="material-icons">link</i></button>
+                        <a href="#!" class="secondary-content" target="_blank" title="Source URL"
+                            data-bind="attr: { href: $data.source_url }">
+                            <i class="material-icons">link</i>
+                        </a>
                     </li>
                 </ul>
             </div>
