@@ -262,6 +262,8 @@
                     self.onPlayerPosition.bind(self));
             session.subscribe('com.forrestli.jukebox.event.playlist.remove',
                     self.onPlaylistRemove.bind(self));
+            session.subscribe('com.forrestli.jukebox.event.playlist.move_song',
+                    self.onPlaylistSongMoved.bind(self));
         };
 
         connection.onclose = function(reason, details) {
@@ -308,6 +310,19 @@
         this.playlist.remove(function(item) {
             return item.id == songId;
         });
+    };
+
+    JukeboxApp.prototype.onPlaylistSongMoved = function(songId) {
+        // I'm lazy. XXX I should probably implement the move
+        // rather than just fetching the playlist again.
+        session.call('com.forrestli.jukebox.get_playlist').then(
+                function(playlist) {
+                    self.playlist(playlist);
+                },
+                function(err) {
+                    console.error('[get_playlist] error:', err);
+                }
+        );
     };
 
     ko.applyBindings(new JukeboxApp());
