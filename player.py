@@ -1,3 +1,4 @@
+import os
 import signal
 import threading
 import time
@@ -15,6 +16,14 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gst, GObject, Gtk
 Gst.init(None)
 
+PRINCIPAL = ''
+PRINCIPAL_TICKET  = ''
+
+if 'JUKEBOX_SERVER_PRINCIPAL' in os.environ:
+    PRINCIPAL = os.environ['JUKEBOX_SERVER_PRINCIPAL']
+if 'JUKEBOX_SERVER_PRINCIPAL_TICKET' in os.environ:
+    PRINCIPAL_TICKET = os.environ['JUKEBOX_SERVER_PRINCIPAL_TICKET']
+
 # ensure that we can actually issue a KeyboardInterrupt to break out
 # of Gtk.main()
 signal.signal(signal.SIGINT, signal.SIG_DFL)
@@ -22,6 +31,13 @@ signal.signal(signal.SIGINT, signal.SIG_DFL)
 class JukeboxPlayer(ApplicationSession):
 
     log = Logger()
+
+    def onConnect(self):
+        self.join(self.config.realm, [u'ticket'], PRINCIPAL)
+
+    def onChallenge(self, challenge):
+        if challenge.method == u'ticket':
+            return PRINCIPAL_TICKET
 
     @inlineCallbacks
     def onJoin(self, details):
@@ -194,5 +210,5 @@ class JukeboxPlayer(ApplicationSession):
         return True
 
 if __name__ == '__main__':
-    runner = ApplicationRunner('ws://127.0.0.1:8080/ws', realm='realm1')
+    runner = ApplicationRunner('ws://127.0.0.1:8080/ws', realm='jukebox_realm')
     runner.run(JukeboxPlayer)

@@ -160,9 +160,17 @@
             Materialize.toast('Not implemented', 4000);
         };
 
+        var onChallenge = function(session, method, extra) {
+            if (method == 'ticket')
+                return 'password';
+        };
+
         var connection = new autobahn.Connection({
             url: 'ws://127.0.0.1:8080/ws',
-            realm: 'realm1'
+            realm: 'jukebox_realm',
+            authmethods: ['ticket'],
+            authid: 'client',
+            onchallenge: onChallenge
         });
 
         connection.onopen = function(session, details) {
