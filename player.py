@@ -82,6 +82,7 @@ class JukeboxPlayer(ApplicationSession):
     def _bus_watcher(self, bus, msg):
         if msg.type == Gst.MessageType.ERROR:
             self.log.info('[player] error: {error}', error=msg.parse_error())
+
         elif msg.type == Gst.MessageType.EOS:
             self.player.set_state(Gst.State.READY)
             res = yield self.wait_for_state(Gst.State.READY)
@@ -89,8 +90,13 @@ class JukeboxPlayer(ApplicationSession):
                 self.current_song = ''
                 yield self.publish('com.forrestli.jukebox.event.player.finished',
                         self.current_song)
+                # tell the progress bar to go to 100%, since it might not.
+                # -2 is our way of saying "100% progress"
+                yield self.publish('com.forrestli.jukebox.event.player.position',
+                        -2)
             else:
                 self.log.info('[bus_watcher] failed to terminate song')
+
         elif msg.type == Gst.MessageType.BUFFERING:
             # as per https://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-plugins/html/gst-plugins-base-plugins-playbin.html,
             # specifically the part on buffering.

@@ -255,6 +255,7 @@
 
     JukeboxApp.prototype.onPlayerStop = function() {
         this.player_state.currently_playing('');
+        this.player_state.position(0);
     };
 
     JukeboxApp.prototype.onPlayerTogglePause = function() {
@@ -264,7 +265,14 @@
 
     JukeboxApp.prototype.onPlayerPosition = function(position) {
         position = position[0];
-        var normalized = position / this.getCurrentSong().duration;
+        var normalized;
+        // -2 means 100%
+        if (position == -2) {
+            normalized = 1;
+        }
+        else {
+            normalized = position / this.getCurrentSong().duration;
+        }
         this.player_state.position(normalized);
     };
 
