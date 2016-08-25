@@ -127,6 +127,9 @@
                     data-bind="foreach: { data: playlist, afterRender: draggablePlaylist }">
                     <li class="collection-item"
                         data-bind="attr: { 'data-id': $data.id }">
+                        <a href="#!" class="secondary-content left sortable-draggable">
+                            <i class="material-icons">reorder</i>
+                        </a>
                         <button class="btn-floating waves-effect waves-light green collection-center no-shadow"
                             data-bind="click: $parent.playOrStopSong.bind($data, $data.id)">
                             <i class="material-icons"

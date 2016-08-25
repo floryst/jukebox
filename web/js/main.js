@@ -171,6 +171,7 @@
                 scrollSensitivity: 30,
                 scrollSpeed: 10,
                 dataIdAttr: 'data-id',
+                handle: '.sortable-draggable',
                 onStart: function(ev) {
                     self._sortableOrder = self.sortablePlaylist.toArray();
                 },

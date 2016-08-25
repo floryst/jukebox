@@ -94,6 +94,12 @@ h5 {
 	background-color: #ddd !important;
 }
 
+.sortable-draggable {
+	margin-left: 0 !important;
+	padding-right: 10px;
+	cursor: grab;
+}
+
 ::-webkit-input-placeholder {
 	color: white;
 }
