@@ -1,9 +1,14 @@
-.no-margin{
-	margin-bottom: 0px;	
+body {
+	background: rgba(0, 0, 0, 0.2) url("../seamless-dark-wood-texture.jpg");
 }
 
-.sidebar {
-	background-color: #ee6e73;
+nav {
+	background: none;
+	box-shadow: none;
+}
+
+.no-margin{
+	margin-bottom: 0px;
 }
 
 .remote {
