@@ -73,3 +73,11 @@ class Playlist(object):
             return None
         elif song_pos is not None:
             return self.playlist[song_pos]
+
+    def next_song(self, cur_song):
+        for idx, song in enumerate(self.playlist):
+            if song['id'] == cur_song:
+                if idx < len(self.playlist):
+                    return self.playlist[idx+1]['id']
+                break
+        return None

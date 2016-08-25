@@ -50,6 +50,9 @@ class Jukebox(ApplicationSession):
         yield self.register(self.play, 'com.forrestli.jukebox.play')
         yield self.register(self.moveup, 'com.forrestli.jukebox.moveup')
 
+        yield self.subscribe(self.on_finish_song,
+                'com.forrestli.jukebox.event.player.finished')
+
     @inlineCallbacks
     def get_playlist(self):
         res = yield self.playlist.get_playlist()
@@ -104,3 +107,11 @@ class Jukebox(ApplicationSession):
             yield self.publish('com.forrestli.jukebox.event.playlist.moveup',
                     song_pos)
         return res
+
+    @inlineCallbacks
+    def on_finish_song(self, song_id):
+        next_song = self.playlist.next_song(song_id)
+        if next_song is None:
+            yield self.call('com.forrestli.jukebox.player.stop')
+        else:
+            self.play(next_song)
