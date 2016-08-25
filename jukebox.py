@@ -9,7 +9,7 @@ from autobahn.twisted.util import sleep
 from autobahn.twisted.wamp import ApplicationSession
 from autobahn.wamp.exception import ApplicationError
 
-sys.path.append('youtube-dl')
+sys.path.append('../youtube-dl')
 from youtube_dl import YoutubeDL
 
 import playlist
