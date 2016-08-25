@@ -56,6 +56,8 @@ class Jukebox(ApplicationSession):
     @inlineCallbacks
     def remove(self, song_id):
         self.log.info('[jukebox.remove]: {song_id}', song_id=song_id)
+        self.playlist.remove_song(song_id)
+
         yield self.publish('com.forrestli.jukebox.event.playlist.remove',
                 song_id)
         return True

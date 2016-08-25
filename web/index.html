@@ -128,7 +128,11 @@
                                 data-bind="text: $parent.playlistSongBtnState($data.id)"></i>
                         </button>
                         <span class="title" data-bind="text: title"></span>
-                        <a href="#!" class="secondary-content"><i class="material-icons">close</i></a>
+                        <!-- dunno why the ordering of the <a> and <button> get switched visually here -->
+                        <a href="#!" class="secondary-content"
+                            data-bind="click: $parent.removeSong.bind($data, $data.id)">
+                            <i class="material-icons">close</i>
+                        </a>
                         <button class="btn-floating waves-effect waves-light red collection-center secondary-content no-shadow"><i class="material-icons">link</i></button>
                     </li>
                 </ul>

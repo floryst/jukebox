@@ -142,6 +142,16 @@
             );
         };
 
+        self.removeSong = function(songId) {
+            self.session.call('com.forrestli.jukebox.remove', [songId]).then(
+                function(res) { },
+                function(err) {
+                    Materialize.toast('Failed to remove song', 4000);
+                    console.error('[remove] error:', err);
+                }
+            );
+        };
+
         var connection = new autobahn.Connection({
             url: 'ws://127.0.0.1:8080/ws',
             realm: 'realm1'
@@ -206,6 +216,8 @@
                     self.onPlayerTogglePause.bind(self));
             session.subscribe('com.forrestli.jukebox.event.player.position',
                     self.onPlayerPosition.bind(self));
+            session.subscribe('com.forrestli.jukebox.event.playlist.remove',
+                    self.onPlaylistRemove.bind(self));
         };
 
         connection.onclose = function(reason, details) {
@@ -238,6 +250,12 @@
         position = position[0];
         var normalized = position / this.getCurrentSong().duration;
         this.player_state.position(normalized);
+    };
+
+    JukeboxApp.prototype.onPlaylistRemove = function(songId) {
+        this.playlist.remove(function(item) {
+            return item.id == songId;
+        });
     };
 
     ko.applyBindings(new JukeboxApp());

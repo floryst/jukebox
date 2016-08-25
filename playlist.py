@@ -44,9 +44,9 @@ class Playlist(object):
 
         return song['id']
 
-    def del_song(self, song_id):
+    def remove_song(self, song_id):
         for idx, song in enumerate(self.playlist):
-            if song_id == self.playlist['id']:
+            if song_id == song['id']:
                 del self.playlist[idx]
                 return
 
