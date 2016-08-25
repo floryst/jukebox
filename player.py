@@ -87,9 +87,9 @@ class JukeboxPlayer(ApplicationSession):
             self.player.set_state(Gst.State.READY)
             res = yield self.wait_for_state(Gst.State.READY)
             if res:
-                self.current_song = ''
                 yield self.publish('com.forrestli.jukebox.event.player.finished',
                         self.current_song)
+                self.current_song = ''
                 # tell the progress bar to go to 100%, since it might not.
                 # -2 is our way of saying "100% progress"
                 yield self.publish('com.forrestli.jukebox.event.player.position',
