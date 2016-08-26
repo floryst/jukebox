@@ -33,7 +33,7 @@
                             ]
                         },
                         {
-                            "name": "anonymous",
+                            "name": "client",
                             "permissions": [
                                 {
                                     "uri": "com.forrestli.jukebox.*",
