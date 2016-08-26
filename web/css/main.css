@@ -98,6 +98,8 @@ h5 {
 	margin-left: 0 !important;
 	padding-right: 10px;
 	cursor: grab;
+	cursor: -webkit-grab;
+	cursor: -moz-grab;
 }
 
 ::-webkit-input-placeholder {
