@@ -100,7 +100,7 @@ class Jukebox(ApplicationSession):
         self.log.info('[jukebox.play]: {song_id}', song_id=song_id)
         source_url = self.playlist.get_song(song_id=song_id)['source_url']
 
-        info = yield self.ydl_get_info(url)
+        info = yield self.ydl_get_info(source_url)
         info = model_transformer.transform(info)
 
         res = yield self.call('com.forrestli.jukebox.player.play',
