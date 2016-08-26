@@ -1,6 +1,7 @@
 import os
 import pprint
 import sys
+from multiprocessing.pool import ThreadPool
 
 from twisted.internet.defer import inlineCallbacks
 from twisted.logger import Logger
@@ -41,6 +42,7 @@ class Jukebox(ApplicationSession):
     @inlineCallbacks
     def onJoin(self, details):
         self.playlist = playlist.Playlist(PLAYLIST_STORE)
+        self.thread_pool = ThreadPool(processes=20)
 
         # jukebox actions
         yield self.register(self.get_playlist,
@@ -54,6 +56,23 @@ class Jukebox(ApplicationSession):
                 'com.forrestli.jukebox.event.player.finished')
 
     @inlineCallbacks
+    def ydl_get_info(self, url):
+        def _extract(url):
+            opts = {
+                'skip_download': True,
+                'format': 'bestaudio'
+            }
+            with YoutubeDL(opts) as ydl:
+                return ydl.extract_info(url, False)
+        async_result = self.thread_pool.apply_async(_extract, (url,))
+        while not async_result.ready():
+            yield sleep(1)
+        if async_result.successful():
+            return async_result.get()
+        else:
+            return None
+
+    @inlineCallbacks
     def get_playlist(self):
         res = yield self.playlist.get_playlist()
         return res
@@ -61,13 +80,10 @@ class Jukebox(ApplicationSession):
     @inlineCallbacks
     def add(self, url):
         self.log.info('[jukebox.add]: {url}', url=url)
-        opts = {
-            'skip_download': True,
-            'format': 'bestaudio'
-        }
-        with YoutubeDL(opts) as ydl:
-            info = ydl.extract_info(url, False)
+
+        info = yield self.ydl_get_info(url)
         info = model_transformer.transform(info)
+
         self.playlist.add_song(info)
         yield self.publish('com.forrestli.jukebox.event.playlist.add', info)
         return True
@@ -85,12 +101,8 @@ class Jukebox(ApplicationSession):
     def play(self, song_id):
         self.log.info('[jukebox.play]: {song_id}', song_id=song_id)
         source_url = self.playlist.get_song(song_id=song_id)['source_url']
-        opts = {
-            'skip_download': True,
-            'format': 'bestaudio'
-        }
-        with YoutubeDL(opts) as ydl:
-            info = ydl.extract_info(source_url, False)
+
+        info = yield self.ydl_get_info(url)
         info = model_transformer.transform(info)
 
         res = yield self.call('com.forrestli.jukebox.player.play',
