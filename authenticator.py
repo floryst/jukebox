@@ -5,6 +5,8 @@ from twisted.internet.defer import inlineCallbacks
 from autobahn.twisted.wamp import ApplicationSession
 from autobahn.wamp.exception import ApplicationError
 
+import hostchecker
+
 PRINCIPALS_FILE = '../principals.txt'
 PRINCIPALS_DB = dict()
 with open(PRINCIPALS_FILE, 'r') as fh:
@@ -24,6 +26,8 @@ class Authenticator(ApplicationSession):
 
          protocol, host, port = details['transport']['peer'].split(':')
          print('Client:', protocol, host, port)
+         if not hostchecker.allowed(host):
+            raise ApplicationError('invalid_host', 'bad host: {}'.format(host))
 
          if authid in PRINCIPALS_DB:
             if ticket == PRINCIPALS_DB[authid]['ticket']:
