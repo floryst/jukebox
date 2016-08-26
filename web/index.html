@@ -19,6 +19,22 @@
 </head>
 
 <body ng-app="jukebox">
+    <div id="preloading-fullscreen" style="display: none">
+        <div>
+            <div class="preloader-wrapper active">
+                <div class="spinner-layer spinner-blue-only">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div><div class="gap-patch">
+                        <div class="circle"></div>
+                    </div><div class="circle-clipper right">
+                    <div class="circle"></div>
+                    </div>
+                </div>
+            </div>
+            <div id="preloading-text">Loading</div>
+        </div>
+    </div>
     <!-- Navbar goes here -->
     <div id="top-loading" class="progress" data-bind="visible: isLoading">
         <div class="indeterminate"></div>

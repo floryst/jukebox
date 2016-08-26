@@ -127,3 +127,25 @@ h5 {
 	margin-left: 10px;
 	color: white;
 }
+
+#preloading-fullscreen {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	z-index: 99;
+	background-color: #ddd;
+	/* for centering the inside div */
+	display: flex;
+}
+
+#preloading-fullscreen > div {
+	/* for centering the inside div */
+	margin: auto;
+	text-align: center;
+}
+
+#preloading-text {
+	font-weight: bold;
+}
