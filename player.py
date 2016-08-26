@@ -140,11 +140,17 @@ class JukeboxPlayer(ApplicationSession):
             # convert from nanoseconds to seconds
             position /= 1e9
 
+        ret, playing_state, pending = self.player.get_state(1)
+        paused = ret == Gst.StateChangeReturn.SUCCESS and \
+                playing_state == Gst.State.PAUSED and \
+                pending == Gst.State.VOID_PENDING
+
         return {
             'currently_playing': self.current_song,
             'is_playing': is_playing,
             'volume': volume,
-            'position': position
+            'position': position,
+            'paused': paused
         }
 
     @inlineCallbacks
