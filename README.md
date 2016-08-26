@@ -9,6 +9,8 @@
  - Gstreamer 1.0 python bindings
  - crossbar.io
  - autobahn
+ - gtk3
+ - pygtk
 
 ## Design
 
@@ -42,3 +44,6 @@ To run the player, export the same environment variables as with the server
 and invoke the player.
 
 `python3 player.py`
+
+You will also need to edit `player.py` and `web/js/main.js` and change the
+localhost `127.0.0.1` references to the desired URLs.
