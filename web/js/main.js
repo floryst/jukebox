@@ -200,6 +200,14 @@
                     );
                 }
             });
+
+            /* hacky way of getting rid of the dupe bug occurring whenever
+             * a song is dragged/moved to the bottom of the playlist.
+             */
+            var elms = document.querySelectorAll('li[draggable=false]');
+            for (var i = 0; i < elms.length; i++) {
+                elms[i].parentNode.removeChild(elms[i]);
+            }
         };
 
         var onChallenge = function(session, method, extra) {
@@ -333,10 +341,11 @@
         });
     };
 
-    JukeboxApp.prototype.onPlaylistSongMoved = function(songId) {
+    JukeboxApp.prototype.onPlaylistSongMoved = function(songMoved) {
         // I'm lazy. XXX I should probably implement the move
         // rather than just fetching the playlist again.
-        session.call('com.forrestli.jukebox.get_playlist').then(
+        var self = this;
+        self.session.call('com.forrestli.jukebox.get_playlist').then(
                 function(playlist) {
                     self.playlist(playlist);
                 },

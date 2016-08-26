@@ -72,10 +72,8 @@ class Jukebox(ApplicationSession):
         else:
             return None
 
-    @inlineCallbacks
     def get_playlist(self):
-        res = yield self.playlist.get_playlist()
-        return res
+        return self.playlist.get_playlist()
 
     @inlineCallbacks
     def add(self, url):

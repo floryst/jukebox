@@ -14,7 +14,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/js/materialize.min.js"></script>
     <script src="http://autobahn.s3.amazonaws.com/autobahnjs/latest/autobahn.min.jgz"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js"></script>
-    <script src="js/Sortable.min.js"></script>
+    <script src="js/Sortable.js"></script>
     <link href="css/main.css" type="text/css" rel="stylesheet">
 </head>
 
@@ -143,7 +143,7 @@
                     data-bind="foreach: { data: playlist, afterRender: draggablePlaylist }">
                     <li class="collection-item"
                         data-bind="attr: { 'data-id': $data.id }">
-                        <a href="#!" class="secondary-content left sortable-draggable">
+                        <a class="secondary-content left sortable-draggable">
                             <i class="material-icons">reorder</i>
                         </a>
                         <button class="btn-floating waves-effect waves-light green collection-center no-shadow"

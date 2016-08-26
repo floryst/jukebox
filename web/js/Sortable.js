@@ -308,7 +308,6 @@
 				return;
 			}
 
-
 			// Prepare `dragstart`
 			this._prepareDragStart(evt, touch, target);
 		},
@@ -821,6 +820,7 @@
 			}
 
 			this._nulling();
+			dragEl = undefined;
 		},
 
 		_nulling: function () {
