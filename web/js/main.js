@@ -17,6 +17,7 @@
             position: ko.observable(-1),
         };
         self.isLoading = ko.observable(false);
+        self.didConnectionFail = ko.observable(false);
 
         self.getCurrentSong = function() {
             var songId = self.player_state.currently_playing();
@@ -231,6 +232,7 @@
                     },
                     function(err) {
                         console.error('[get_playlist] error:', err);
+                        throw err;
                     }
             ).then(function() {
                 session.call('com.forrestli.jukebox.player.get_state').then(
@@ -247,8 +249,11 @@
                         },
                         function(err) {
                             console.error('[get_playlist] error:', err);
+                            throw err;
                         }
                 );
+            }).catch(function(err) {
+                self.didConnectionFail(true);
             });
 
             session.subscribe('com.forrestli.jukebox.event.playlist.add',
@@ -269,6 +274,7 @@
 
         connection.onclose = function(reason, details) {
             console.error('Connection lost:', reason);
+            self.didConnectionFail(true);
             self.session = null;
         };
 
