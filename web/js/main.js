@@ -18,6 +18,18 @@
         };
         self.isLoading = ko.observable(false);
         self.didConnectionFail = ko.observable(false);
+        self.isPreloadingDone = ko.observable(false);
+
+        self.preloadingText = ko.pureComputed(function() {
+            if (self.didConnectionFail()) {
+                return 'Bad connection (i.e. wrong network, server\'s down, etc.)';
+            }
+            return '';
+        });
+
+        self.preloaderLoading = ko.pureComputed(function() {
+            return (! self.isPreloadingDone()) && (! self.didConnectionFail());
+        });
 
         self.getCurrentSong = function() {
             var songId = self.player_state.currently_playing();
@@ -252,6 +264,8 @@
                             throw err;
                         }
                 );
+            }).then(function() {
+                self.isPreloadingDone(true);
             }).catch(function(err) {
                 self.didConnectionFail(true);
             });

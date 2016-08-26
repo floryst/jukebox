@@ -140,6 +140,12 @@ h5 {
 	display: flex;
 }
 
+.hidden {
+	visibility: hidden;
+	opacity: 0;
+	transition: visibility 0s 1s, opacity 0.5s linear;
+}
+
 #preloading-fullscreen > div {
 	/* for centering the inside div */
 	margin: auto;

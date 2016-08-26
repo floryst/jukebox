@@ -19,9 +19,9 @@
 </head>
 
 <body ng-app="jukebox">
-    <div id="preloading-fullscreen" data-bind="visible: didConnectionFail">
+    <div id="preloading-fullscreen" data-bind="css: { hidden: isPreloadingDone }">
         <div>
-            <div style="display: none" class="preloader-wrapper active">
+            <div class="preloader-wrapper active" data-bind="visible: preloaderLoading">
                 <div class="spinner-layer spinner-blue-only">
                     <div class="circle-clipper left">
                         <div class="circle"></div>
@@ -32,7 +32,7 @@
                     </div>
                 </div>
             </div>
-            <div id="preloading-text">Bad connection (i.e. wrong network, server's down, etc.)</div>
+            <div id="preloading-text" data-bind="text: preloadingText"></div>
         </div>
     </div>
     <!-- Navbar goes here -->
