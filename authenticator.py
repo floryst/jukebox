@@ -25,9 +25,10 @@ class Authenticator(ApplicationSession):
          ticket = details['ticket']
 
          protocol, host, port = details['transport']['peer'].split(':')
-         print('Client:', protocol, host, port)
+         allowed_host = hostchecker.allowed(host)
+         print('[authenticator] Client:', protocol, host, port, 'allowed:', allowed_host)
          if not hostchecker.allowed(host):
-            raise ApplicationError('invalid_host', 'bad host: {}'.format(host))
+            raise ApplicationError('invalid_host', 'host not allowed')
 
          if authid in PRINCIPALS_DB:
             if ticket == PRINCIPALS_DB[authid]['ticket']:
