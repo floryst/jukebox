@@ -80,10 +80,12 @@ class Jukebox(ApplicationSession):
         self.log.info('[jukebox.add]: {url}', url=url)
 
         info = yield self.ydl_get_info(url)
-        info = model_transformer.transform(info)
+        if '_type' in info and info['_type'] == 'playlist':
+            for entry in info['entries']:
+                song = model_transformer.transform(entry)
+                self.playlist.add_song(song)
+                yield self.publish('com.forrestli.jukebox.event.playlist.add', song)
 
-        self.playlist.add_song(info)
-        yield self.publish('com.forrestli.jukebox.event.playlist.add', info)
         return True
 
     @inlineCallbacks
