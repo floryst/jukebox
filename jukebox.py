@@ -89,7 +89,7 @@ class Jukebox(ApplicationSession):
                 yield self.publish('com.forrestli.jukebox.event.playlist.add', song)
         else:
             song = model_transformer.transform(info)
-            self.playlist.add_song(info)
+            self.playlist.add_song(song)
             yield self.publish('com.forrestli.jukebox.event.playlist.add', song)
 
         return True
