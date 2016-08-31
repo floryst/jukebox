@@ -310,6 +310,7 @@
     JukeboxApp.prototype.onPlayerPlay = function(msg) {
         var songId = msg[0];
         this.player_state.currently_playing(songId);
+        this.player_state.paused(false);
     };
 
     JukeboxApp.prototype.onPlayerStop = function() {
