@@ -6,6 +6,7 @@
  - Gstreamer 1.0
  - Gstreamer 1.0 good plugins
  - Gstreamer 1.0 bad plugins
+ - Gstreamer 1.0 ugly plugins (for mp3 and others)
  - Gstreamer 1.0 python bindings
  - crossbar.io
  - autobahn
