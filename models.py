@@ -46,7 +46,8 @@ class Youtube(Song):
     def __init__(self, info):
        '''Given info should not be in playlist form.'''
        for fmt in info['formats']:
-           if fmt['format_id'] == '249':
+           # doesn't matter what audio we get, since quality isn't an issue atm.
+           if fmt['format_note'] == 'DASH audio':
                url = fmt['url']
        super().__init__(
                title=info['title'],
