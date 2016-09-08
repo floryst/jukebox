@@ -59,8 +59,7 @@ class Jukebox(ApplicationSession):
     def ydl_get_info(self, url):
         def _extract(url):
             opts = {
-                'skip_download': True,
-                'format': 'bestaudio'
+                'skip_download': True
             }
             with YoutubeDL(opts) as ydl:
                 return ydl.extract_info(url, False)
@@ -85,13 +84,23 @@ class Jukebox(ApplicationSession):
             return False
         elif '_type' in info and info['_type'] == 'playlist':
             for entry in info['entries']:
-                model = getattr(models, entry['extractor_key'])
+                try:
+                    model = getattr(models, entry['extractor_key'])
+                except AttributeError:
+                    self.log.info('[jukebox.add]: cannot parse {ext}',
+                            ext=entry['extractor'])
+                    return False
                 song = model(entry)
                 self.playlist.add_song(song)
                 yield self.publish('com.forrestli.jukebox.event.playlist.add',
                         song.to_dict())
         else:
-            model = getattr(models, info['extractor_key'])
+            try:
+                model = getattr(models, info['extractor_key'])
+            except AttributeError:
+                self.log.info('[jukebox.add]: cannot parse {ext}',
+                        ext=info['extractor'])
+                return False
             song = model(info)
             self.playlist.add_song(song)
             yield self.publish('com.forrestli.jukebox.event.playlist.add',
@@ -118,7 +127,12 @@ class Jukebox(ApplicationSession):
 
         # XXX use song.play_url after i get extra thread running that updates play_url.
         info = yield self.ydl_get_info(source_url)
-        model = getattr(models, info['extractor_key'])
+        try:
+            model = getattr(models, info['extractor_key'])
+        except AttributeError:
+            self.log.info('[jukebox.play]: cannot parse {ext}',
+                    ext=info['extractor'])
+            return False
         tmp = model(info)
 
         res = yield self.call('com.forrestli.jukebox.player.play',
