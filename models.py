@@ -66,3 +66,14 @@ class Bandcamp(Song):
                source_url=info['webpage_url'],
                duration=info['duration'],
                extractor=info['extractor'])
+
+class Soundcloud(Song):
+
+    def __init__(self, info):
+       '''Given info should not be in playlist form.'''
+       super().__init__(
+               title=info['title'],
+               play_url=info['url'],
+               source_url=info['webpage_url'],
+               duration=info['duration'],
+               extractor=info['extractor'])
