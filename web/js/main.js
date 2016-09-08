@@ -55,7 +55,10 @@
         self.player_state.volume.subscribe(function(volume) {
             self.session.call('com.forrestli.jukebox.player.set_volume',
                     [volume]).then(
-                function(res) { },
+                function(res) {
+                    if (!res) throw 'rpc returned false';
+                }
+            ).catch(
                 function(err) {
                     console.error('[volume] error:', err);
                 }
@@ -110,13 +113,15 @@
             formElement.elements['youtubeURL submit'].disabled = true;
             self.session.call('com.forrestli.jukebox.add', [url]).then(
                 function(res) {
-                    formElement.elements['youtubeURL'].value = '';
-                },
+                    if (!res) throw 'rpc returned false';
+                }
+            ).catch(
                 function(err) {
                     Materialize.toast('Failed to add song', 4000);
                     console.error('[add] error:', err);
                 }
             ).then(function() {
+                formElement.elements['youtubeURL'].value = '';
                 formElement.elements['youtubeURL submit'].disabled = false;
             });
         };
@@ -125,7 +130,10 @@
             if (self.player_state.currently_playing() == songId) {
                 // stop the song
                 self.session.call('com.forrestli.jukebox.player.stop').then(
-                    function(res) { },
+                    function(res) {
+                        if (!res) throw 'rpc returned false';
+                    }
+                ).catch(
                     function(err) {
                         Materialize.toast('Failed to stop song', 4000);
                         console.error('[stop] error:', err);
@@ -139,7 +147,8 @@
                     function(res) {
                         if (!res) throw 'return value is false';
                     }
-                ).catch(function(err) {
+                ).catch(
+                    function(err) {
                         Materialize.toast('Failed to play song', 4000);
                         console.error('[play] error:', err);
                     }
@@ -149,7 +158,10 @@
 
         self.togglePause = function() {
             self.session.call('com.forrestli.jukebox.player.toggle_pause').then(
-                function(res) { },
+                function(res) {
+                    if (!res) throw 'return value is false';
+                }
+            ).catch(
                 function(err) {
                     Materialize.toast('Failed to toggle pause', 4000);
                     console.error('[toggle_pause] error:', err);
@@ -159,7 +171,10 @@
 
         self.removeSong = function(songId) {
             self.session.call('com.forrestli.jukebox.remove', [songId]).then(
-                function(res) { },
+                function(res) {
+                    if (!res) throw 'return value is false';
+                }
+            ).catch(
                 function(err) {
                     Materialize.toast('Failed to remove song', 4000);
                     console.error('[remove] error:', err);
@@ -193,7 +208,10 @@
                 onEnd: function(ev) {
                     self.session.call('com.forrestli.jukebox.move_song',
                             [ev.oldIndex, ev.newIndex]).then(
-                        function(res) { },
+                        function(res) {
+                            if (!res) throw 'return value is false';
+                        }
+                    ).catch(
                         function(err) {
                             self.sortablePlaylist.sort(self._sortableOrder);
                             Materialize.toast('Failed to move song', 4000);
@@ -270,7 +288,7 @@
                             }
                         },
                         function(err) {
-                            console.error('[get_playlist] error:', err);
+                            console.error('[get_state] error:', err);
                             throw err;
                         }
                 );
