@@ -1,21 +1,8 @@
 import json
 import os.path
 import string
-from random import randint
 
-SONG_MODEL = dict(
-    title = str(),
-    play_url = str(),
-    source_url = str(),
-    duration = int(),
-    extractor = str(),
-    extra_info = dict()
-)
-
-def _random_id():
-    bound = len(string.ascii_lowercase)
-    return ''.join(
-            string.ascii_lowercase[randint(0, bound-1)] for i in range(10))
+from models import Song
 
 class Playlist(object):
 
@@ -26,27 +13,29 @@ class Playlist(object):
         if self.store != ':memory:':
             if os.path.exists(store):
                 with open(store, 'r') as fh:
-                    self.playlist = json.loads(fh.read())
+                    # each line is 1 song.
+                    for line in fh:
+                        self.playlist.append(Song.from_json(line))
 
     def _update_store(self):
         if self.store != ':memory:':
             with open(self.store, 'w') as fh:
-                fh.write(json.dumps(self.playlist))
+                # each line is 1 song.
+                for song in self.playlist:
+                    fh.write(song.to_json())
+                    fh.write('\n')
 
     def add_song(self, song):
         """Adds a song to the playlist.
 
         Returns the song's new ID.
         """
-        song['id'] = _random_id()
         self.playlist.append(song)
         self._update_store()
 
-        return song['id']
-
     def remove_song(self, song_id):
         for idx, song in enumerate(self.playlist):
-            if song_id == song['id']:
+            if song_id == song.id:
                 del self.playlist[idx]
                 return
 
@@ -63,12 +52,12 @@ class Playlist(object):
         return True
 
     def get_playlist(self):
-        return self.playlist
+        return [song.to_dict() for song in self.playlist]
 
     def get_song(self, song_id=None, song_pos=None):
         if song_id is not None:
             for song in self.playlist:
-                if song['id'] == song_id:
+                if song.id == song_id:
                     return song
             return None
         elif song_pos is not None:
@@ -76,8 +65,8 @@ class Playlist(object):
 
     def next_song(self, cur_song):
         for idx, song in enumerate(self.playlist):
-            if song['id'] == cur_song:
+            if song.id  == cur_song:
                 if idx < len(self.playlist) - 1:
-                    return self.playlist[idx+1]['id']
+                    return self.playlist[idx+1].id
                 break
         return None

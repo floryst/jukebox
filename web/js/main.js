@@ -136,8 +136,10 @@
             else {
                 // play the song
                 self.session.call('com.forrestli.jukebox.play', [songId]).then(
-                    function(res) { },
-                    function(err) {
+                    function(res) {
+                        if (!res) throw 'return value is false';
+                    }
+                ).catch(function(err) {
                         Materialize.toast('Failed to play song', 4000);
                         console.error('[play] error:', err);
                     }

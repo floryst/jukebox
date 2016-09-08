@@ -14,7 +14,7 @@ sys.path.append('../youtube-dl')
 from youtube_dl import YoutubeDL
 
 import playlist
-import model_transformer
+import models
 
 PLAYLIST_STORE = 'playlist.json'
 
@@ -80,17 +80,22 @@ class Jukebox(ApplicationSession):
         self.log.info('[jukebox.add]: {url}', url=url)
 
         info = yield self.ydl_get_info(url)
+        # TODO is 'extractor' in playlist output?
         if info is None:
             return False
         elif '_type' in info and info['_type'] == 'playlist':
             for entry in info['entries']:
-                song = model_transformer.transform(entry)
+                model = getattr(models, entry['extractor_key'])
+                song = model(entry)
                 self.playlist.add_song(song)
-                yield self.publish('com.forrestli.jukebox.event.playlist.add', song)
+                yield self.publish('com.forrestli.jukebox.event.playlist.add',
+                        song.to_dict())
         else:
-            song = model_transformer.transform(info)
+            model = getattr(models, info['extractor_key'])
+            song = model(info)
             self.playlist.add_song(song)
-            yield self.publish('com.forrestli.jukebox.event.playlist.add', song)
+            yield self.publish('com.forrestli.jukebox.event.playlist.add',
+                    song.to_dict())
 
         return True
 
@@ -106,13 +111,18 @@ class Jukebox(ApplicationSession):
     @inlineCallbacks
     def play(self, song_id):
         self.log.info('[jukebox.play]: {song_id}', song_id=song_id)
-        source_url = self.playlist.get_song(song_id=song_id)['source_url']
+        song = self.playlist.get_song(song_id=song_id)
+        if song is None:
+            return False
+        source_url = song.source_url
 
+        # XXX use song.play_url after i get extra thread running that updates play_url.
         info = yield self.ydl_get_info(source_url)
-        info = model_transformer.transform(info)
+        model = getattr(models, info['extractor_key'])
+        tmp = model(info)
 
         res = yield self.call('com.forrestli.jukebox.player.play',
-            song_id, info['play_url'])
+            song_id, tmp.play_url)
         return res
 
     @inlineCallbacks
