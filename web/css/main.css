@@ -59,7 +59,7 @@ h5 {
 	margin-top: 10vh;
 }
 .collection-center{
-	margin-top: 1vh;
+	margin-top: -8px;
 }
 .center_info {
 	margin-top: 0.075vh;
@@ -86,8 +86,20 @@ h5 {
 	margin-right: 0;
 }
 
+.control1 {
+	float: left;
+	width: 80px;
+}
+
+.control2 {
+	float: right;
+	width: 50px;
+}
+
 .title {
-	margin-left: 10px;
+	/* Add on control1 and control2 to 10px margins */
+	margin-left: 90px;
+	margin-right: 60px;
 }
 
 .sortable-ghost {
