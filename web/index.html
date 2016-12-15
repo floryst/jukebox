@@ -163,24 +163,28 @@
                     data-bind="foreach: { data: playlist, afterRender: draggablePlaylist }">
                     <li class="collection-item"
                         data-bind="attr: { 'data-id': $data.id }">
-                        <a class="secondary-content left sortable-draggable">
-                            <i class="material-icons">reorder</i>
-                        </a>
-                        <button class="btn-floating waves-effect waves-light green collection-center no-shadow"
-                            data-bind="click: $parent.playOrStopSong.bind($data, $data.id)">
-                            <i class="material-icons"
-                                data-bind="text: $parent.playlistSongBtnState($data.id)"></i>
-                        </button>
-                        <span class="title" data-bind="text: title"></span>
-                        <!-- dunno why the ordering of the <a> and <button> get switched visually here -->
-                        <a href="#!" class="secondary-content" title="Remove"
-                            data-bind="click: $parent.removeSong.bind($data, $data.id)">
-                            <i class="material-icons">close</i>
-                        </a>
-                        <a href="#!" class="secondary-content" target="_blank" title="Source URL"
-                            data-bind="attr: { href: $data.source_url }">
-                            <i class="material-icons">link</i>
-                        </a>
+                        <div class="control1">
+                            <a class="secondary-content left sortable-draggable">
+                                <i class="material-icons">reorder</i>
+                            </a>
+                            <button class="btn-floating waves-effect waves-light green collection-center no-shadow"
+                                data-bind="click: $parent.playOrStopSong.bind($data, $data.id)">
+                                <i class="material-icons"
+                                    data-bind="text: $parent.playlistSongBtnState($data.id)"></i>
+                            </button>
+                        </div>
+                        <div class="control2">
+                            <!-- dunno why the ordering of the <a> and <button> get switched visually here -->
+                            <a href="#!" class="secondary-content" title="Remove"
+                                data-bind="click: $parent.removeSong.bind($data, $data.id)">
+                                <i class="material-icons">close</i>
+                            </a>
+                            <a href="#!" class="secondary-content" target="_blank" title="Source URL"
+                                data-bind="attr: { href: $data.source_url }">
+                                <i class="material-icons">link</i>
+                            </a>
+                        </div>
+                        <div class="title" data-bind="text: title"></div>
                     </li>
                 </ul>
             </div>

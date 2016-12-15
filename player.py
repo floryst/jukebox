@@ -93,6 +93,10 @@ class JukeboxPlayer(ApplicationSession):
                 'com.forrestli.jukebox.player.set_volume')
         yield self.register(self.toggle_rainy,
                 'com.forrestli.jukebox.player.toggle_rain')
+        yield self.register(self.forward,
+                'com.forrestli.jukebox.player.forward')
+        yield self.register(self.rewind,
+                'com.forrestli.jukebox.player.rewind')
 
     @inlineCallbacks
     def _bus_watcher(self, bus, msg):
@@ -270,6 +274,26 @@ class JukeboxPlayer(ApplicationSession):
         self.player.set_property('volume', volume / 100)
         yield self.publish('com.forrestli.jukebox.event.player.volume', volume)
         return True
+
+    def forward(self):
+        ret, pos = self.player.query_position(Gst.Format.TIME)
+        if not ret:
+            return False
+        # +5 seconds
+        # TODO remove hardcoded 5 seconds
+        pos += 5*1000000000
+        ret = self.player.seek_simple(Gst.Format.TIME, Gst.SeekFlags.FLUSH, pos)
+        return ret
+
+    def rewind(self):
+        ret, pos = self.player.query_position(Gst.Format.TIME)
+        if not ret:
+            return False
+        # -5 seconds
+        # TODO remove hardcoded 5 seconds
+        pos = max(pos - 5*1000000000, 0)
+        ret = self.player.seek_simple(Gst.Format.TIME, Gst.SeekFlags.FLUSH, pos)
+        return ret
 
 if __name__ == '__main__':
     runner = ApplicationRunner('ws://127.0.0.1:8080/ws', realm='jukebox_realm')
