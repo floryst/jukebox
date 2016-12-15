@@ -53,6 +53,7 @@ class JukeboxPlayer(ApplicationSession):
         def run_rainy():
             bus = self.rainy_player.get_bus()
             bus.add_signal_watch()
+            bus.connect('message', self._rainy_mood_bus_watcher)
             GObject.threads_init()
             Gtk.main()
 
@@ -123,27 +124,33 @@ class JukeboxPlayer(ApplicationSession):
                 self.player.set_state(Gst.State.PLAYING)
 
     @inlineCallbacks
+    def _rainy_mood_bus_watcher(self, bus, msg):
+        if msg.type == Gst.MessageType.ERROR:
+            self.log.info('[player] error: {error}', error=msg.parse_error())
+
+        elif msg.type == Gst.MessageType.EOS:
+            self.rainy_player.set_state(Gst.State.NULL)
+            # TODO check for success
+            yield self.wait_for_state(Gst.State.NULL, self.rainy_player)
+
+    @inlineCallbacks
     def toggle_rainy(self):
         if RAINYMOOD_LOCATION is None:
             self.log.info('[rain_player.toggle] cannot find rainymood in environ')
             return False
 
         _, state, pending = self.rainy_player.get_state(1)
-        if pending == Gst.State.VOID_PENDING:
-            if state == Gst.State.PLAYING:
-                new_state = Gst.State.PAUSED
-            elif Gst.State.PAUSED:
-                self.rainy_player.set_property('uri', 'file://{rainymood}'.format(rainymood=RAINYMOOD_LOCATION))
-                new_state = Gst.State.PLAYING
-            else:
-                return False
-            self.rainy_player.set_state(new_state)
-            success = yield self.wait_for_state(new_state, self.rainy_player)
-            if not success:
-                return
-        else:
-            self.log.info('[rainy_player.toggle] cannot play due to pending state: {state}',
-                    state=pending)
+        if state == Gst.State.NULL:
+            self.rainy_player.set_property('uri', 'file://{rainymood}'.format(rainymood=RAINYMOOD_LOCATION))
+            new_state = Gst.State.PLAYING
+        elif state == Gst.State.PLAYING:
+            new_state = Gst.State.PAUSED
+        elif state == Gst.State.PAUSED:
+            new_state = Gst.State.PLAYING
+
+        self.rainy_player.set_state(new_state)
+        success = yield self.wait_for_state(new_state, self.rainy_player)
+        if not success:
             return False
 
         yield self.publish('com.forrestli.jukebox.event.player.toggle_rain')
