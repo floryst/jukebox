@@ -1,0 +1,7 @@
+hostchecker.py
+*.m4a
+principals.txt
+__pycache__
+playlist.json
+.crossbar/key.priv
+.crossbar/key.pub

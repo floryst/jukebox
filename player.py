@@ -18,11 +18,14 @@ Gst.init(None)
 
 PRINCIPAL = ''
 PRINCIPAL_TICKET  = ''
+RAINYMOOD_LOCATION = None
 
 if 'JUKEBOX_SERVER_PRINCIPAL' in os.environ:
     PRINCIPAL = os.environ['JUKEBOX_SERVER_PRINCIPAL']
 if 'JUKEBOX_SERVER_PRINCIPAL_TICKET' in os.environ:
     PRINCIPAL_TICKET = os.environ['JUKEBOX_SERVER_PRINCIPAL_TICKET']
+if 'JUKEBOX_SERVER_RAINMOOD_LOCATION' in os.environ:
+    RAINYMOOD_LOCATION = os.path.abspath(os.environ['JUKEBOX_SERVER_RAINMOOD_LOCATION'])
 
 # ensure that we can actually issue a KeyboardInterrupt to break out
 # of Gtk.main()
@@ -43,8 +46,17 @@ class JukeboxPlayer(ApplicationSession):
     def onJoin(self, details):
 
         self.player = Gst.ElementFactory.make('playbin', None)
+        self.rainy_player = Gst.ElementFactory.make('playbin', None)
 
         self.current_song = ''
+
+        def run_rainy():
+            bus = self.rainy_player.get_bus()
+            bus.add_signal_watch()
+            bus.connect('message', self._rainy_mood_bus_watcher)
+            GObject.threads_init()
+            Gtk.main()
+
 
         def run_player():
             bus = self.player.get_bus()
@@ -52,7 +64,9 @@ class JukeboxPlayer(ApplicationSession):
             bus.connect('message', self._bus_watcher)
             GObject.threads_init()
             Gtk.main()
+
         threading.Thread(target=run_player).start()
+        threading.Thread(target=run_rainy).start()
 
         @inlineCallbacks
         def monitor_player():
@@ -77,6 +91,8 @@ class JukeboxPlayer(ApplicationSession):
                 'com.forrestli.jukebox.player.toggle_pause')
         yield self.register(self.set_volume,
                 'com.forrestli.jukebox.player.set_volume')
+        yield self.register(self.toggle_rainy,
+                'com.forrestli.jukebox.player.toggle_rain')
         yield self.register(self.forward,
                 'com.forrestli.jukebox.player.forward')
         yield self.register(self.rewind,
@@ -89,7 +105,7 @@ class JukeboxPlayer(ApplicationSession):
 
         elif msg.type == Gst.MessageType.EOS:
             self.player.set_state(Gst.State.READY)
-            res = yield self.wait_for_state(Gst.State.READY)
+            res = yield self.wait_for_state(Gst.State.READY, self.player)
             if res:
                 yield self.publish('com.forrestli.jukebox.event.player.finished',
                         self.current_song)
@@ -112,7 +128,40 @@ class JukeboxPlayer(ApplicationSession):
                 self.player.set_state(Gst.State.PLAYING)
 
     @inlineCallbacks
-    def wait_for_state(self, gst_state):
+    def _rainy_mood_bus_watcher(self, bus, msg):
+        if msg.type == Gst.MessageType.ERROR:
+            self.log.info('[player] error: {error}', error=msg.parse_error())
+
+        elif msg.type == Gst.MessageType.EOS:
+            self.rainy_player.set_state(Gst.State.NULL)
+            # TODO check for success
+            yield self.wait_for_state(Gst.State.NULL, self.rainy_player)
+
+    @inlineCallbacks
+    def toggle_rainy(self):
+        if RAINYMOOD_LOCATION is None:
+            self.log.info('[rain_player.toggle] cannot find rainymood in environ')
+            return False
+
+        _, state, pending = self.rainy_player.get_state(1)
+        if state == Gst.State.NULL:
+            self.rainy_player.set_property('uri', 'file://{rainymood}'.format(rainymood=RAINYMOOD_LOCATION))
+            new_state = Gst.State.PLAYING
+        elif state == Gst.State.PLAYING:
+            new_state = Gst.State.PAUSED
+        elif state == Gst.State.PAUSED:
+            new_state = Gst.State.PLAYING
+
+        self.rainy_player.set_state(new_state)
+        success = yield self.wait_for_state(new_state, self.rainy_player)
+        if not success:
+            return False
+
+        yield self.publish('com.forrestli.jukebox.event.player.toggle_rain')
+        return True
+
+    @inlineCallbacks
+    def wait_for_state(self, gst_state, player):
         """I know this isn't asynchronous, but it gets the job done.
         Technically I should be checking for state changes in _bus_watcher...
         """
@@ -120,7 +169,7 @@ class JukeboxPlayer(ApplicationSession):
         max_counter = 10
         while counter <= max_counter:
             # block up to 1 second
-            state_change_return, state, pending  = self.player.get_state(1)
+            state_change_return, state, pending  = player.get_state(1)
             if state_change_return == Gst.StateChangeReturn.SUCCESS:
                 return True
             yield sleep(0.5)
@@ -157,12 +206,13 @@ class JukeboxPlayer(ApplicationSession):
             'paused': paused
         }
 
+
     @inlineCallbacks
     def play(self, song_id, url):
         _, _, pending = self.player.get_state(1)
         if pending == Gst.State.VOID_PENDING:
             self.player.set_state(Gst.State.READY)
-            success = yield self.wait_for_state(Gst.State.READY)
+            success = yield self.wait_for_state(Gst.State.READY, self.player)
             if not success:
                 return False
 
@@ -170,7 +220,7 @@ class JukeboxPlayer(ApplicationSession):
             self.player.set_property('uri', url)
 
             self.player.set_state(Gst.State.PLAYING)
-            success = yield self.wait_for_state(Gst.State.PLAYING)
+            success = yield self.wait_for_state(Gst.State.PLAYING, self.player)
             if not success:
                 return False
         else:
@@ -184,7 +234,7 @@ class JukeboxPlayer(ApplicationSession):
     @inlineCallbacks
     def stop(self):
         self.player.set_state(Gst.State.NULL)
-        res = yield self.wait_for_state(Gst.State.NULL)
+        res = yield self.wait_for_state(Gst.State.NULL, self.player)
         if res:
             yield self.publish('com.forrestli.jukebox.event.player.stop')
             self.current_song = ''
@@ -201,7 +251,7 @@ class JukeboxPlayer(ApplicationSession):
             else:
                 return False
             self.player.set_state(new_state)
-            success = yield self.wait_for_state(new_state)
+            success = yield self.wait_for_state(new_state, self.player)
             if not success:
                 return False
         else:

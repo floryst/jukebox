@@ -15,10 +15,12 @@
             paused: ko.observable(false),
             volume: ko.observable(-1),
             position: ko.observable(-1),
+            make_it_rain: ko.observable(-1)
         };
         self.isLoading = ko.observable(false);
         self.didConnectionFail = ko.observable(false);
         self.isPreloadingDone = ko.observable(false);
+        self.isRaining = ko.observable(false);
 
         self.preloadingText = ko.pureComputed(function() {
             if (self.didConnectionFail()) {
@@ -168,6 +170,16 @@
                 }
             );
         };
+
+        self.toggleRain = function() {
+            self.session.call('com.forrestli.jukebox.player.toggle_rain').then(
+                function(res) {
+                    if (!res) throw 'return value is false';
+                }).catch(function(err) {
+                    Materialize.toast('Failed to toggle rainy', 4000);
+                    console.error('[toggle rain] error:', err);
+                })
+        }
 
         self.removeSong = function(songId) {
             self.session.call('com.forrestli.jukebox.remove', [songId]).then(
@@ -330,6 +342,8 @@
                     self.onPlaylistRemove.bind(self));
             session.subscribe('com.forrestli.jukebox.event.playlist.move_song',
                     self.onPlaylistSongMoved.bind(self));
+            session.subscribe('com.forrestli.jukebox.event.player.toggle_rain',
+                    self.onPlayerToggleRain.bind(self));
         };
 
         connection.onclose = function(reason, details) {
@@ -357,9 +371,14 @@
     };
 
     JukeboxApp.prototype.onPlayerTogglePause = function() {
-        var newState = ! this.player_state.paused()
+        var newState = ! this.player_state.paused();
         this.player_state.paused(newState);
     };
+
+    JukeboxApp.prototype.onPlayerToggleRain = function() {
+        var newState = ! this.player_state.make_it_rain();
+        this.player_state.make_it_rain(newState);
+    }
 
     JukeboxApp.prototype.onPlayerPosition = function(position) {
         position = position[0];
