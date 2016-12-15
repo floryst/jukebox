@@ -183,11 +183,29 @@
         };
 
         self.fastRewind = function() {
-            Materialize.toast('Not implemented', 4000);
+            self.session.call('com.forrestli.jukebox.player.rewind').then(
+                function(res) {
+                    if (!res) throw 'return value is false';
+                }
+            ).catch(
+                function(err) {
+                    Materialize.toast('Failed to rewind', 4000);
+                    console.error('[fastrewind] error:', err);
+                }
+            );
         };
 
         self.fastForward = function() {
-            Materialize.toast('Not implemented', 4000);
+            self.session.call('com.forrestli.jukebox.player.forward').then(
+                function(res) {
+                    if (!res) throw 'return value is false';
+                }
+            ).catch(
+                function(err) {
+                    Materialize.toast('Failed to fast forward', 4000);
+                    console.error('[fastforward] error:', err);
+                }
+            );
         };
 
         self.draggablePlaylist = function() {
