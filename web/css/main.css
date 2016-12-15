@@ -1,14 +1,3 @@
-body::after {
-	content: "";
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	position: absolute;
-	background: rgba(0, 0, 0, 0.2) url("../seamless-dark-wood-texture.jpg");
-	opacity: 0.8;
-	z-index: -99;
-}
 
 nav {
 	background: none;
@@ -36,7 +25,7 @@ input {
 }
 
 body {
-	height:91.2vh;
+	background: rgba(0, 0, 0, 0.2) url("../seamless-dark-wood-texture.jpg");
 }
 
 .no-shadow{
